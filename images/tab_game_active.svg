@@ -1,0 +1,11 @@
+<!-- SVG占位符: 游戏图标(激活状态) -->
+<svg width="81" height="81" viewBox="0 0 81 81" xmlns="http://www.w3.org/2000/svg">
+  <rect width="81" height="81" rx="8" fill="#f0f8ff"/>
+  <rect x="25" y="25" width="10" height="10" rx="2" fill="#1296db"/>
+  <rect x="40" y="25" width="10" height="10" rx="2" fill="#1296db"/>
+  <rect x="55" y="25" width="10" height="10" rx="2" fill="#1296db"/>
+  <rect x="25" y="40" width="10" height="10" rx="2" fill="#1296db"/>
+  <rect x="40" y="40" width="10" height="10" rx="2" fill="#1296db"/>
+  <rect x="55" y="40" width="10" height="10" rx="2" fill="#1296db"/>
+  <text x="40.5" y="70" text-anchor="middle" font-size="8" fill="#1296db">游戏</text>
+</svg>

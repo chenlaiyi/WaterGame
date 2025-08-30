@@ -1,0 +1,9 @@
+<!-- SVG占位符: 排行榜图标 -->
+<svg width="81" height="81" viewBox="0 0 81 81" xmlns="http://www.w3.org/2000/svg">
+  <rect width="81" height="81" rx="8" fill="#e0e0e0"/>
+  <rect x="25" y="40" width="8" height="15" fill="#666"/>
+  <rect x="35" y="30" width="8" height="25" fill="#666"/>
+  <rect x="45" y="35" width="8" height="20" fill="#666"/>
+  <circle cx="40.5" cy="22" r="3" fill="#666"/>
+  <text x="40.5" y="70" text-anchor="middle" font-size="8" fill="#666">排行榜</text>
+</svg>

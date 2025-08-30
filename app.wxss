@@ -1,0 +1,616 @@
+/**app.wxss**/
+/* 点点够净水器小游戏 - 全局样式 */
+
+/* =============  全局样式重置  ============= */
+page {
+  font-family: 'PingFang SC', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  color: #333;
+  font-size: 32rpx;
+  line-height: 1.4;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* =============  品牌色彩主题  ============= */
+:root {
+  /* 点点够品牌主色 */
+  --primary-color: #1296db;
+  --primary-light: #42a5f5; 
+  --primary-dark: #0d47a1;
+  
+  /* 净水主题色 */
+  --water-blue: #e3f2fd;
+  --water-light: #f3e5f5;
+  --clean-white: #ffffff;
+  
+  /* 污染物颜色 */
+  --particle-color: #8b4513;
+  --microbe-color: #228b22;
+  --chemical-color: #8a2be2;
+  
+  /* 功能色彩 */
+  --success-color: #4caf50;
+  --warning-color: #ff9800;
+  --error-color: #f44336;
+  --info-color: #2196f3;
+  
+  /* 中性色 */
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --text-disabled: #999999;
+  --border-color: #e0e0e0;
+  --bg-light: #f5f5f5;
+  --shadow: rgba(0, 0, 0, 0.1);
+}
+
+/* =============  通用布局类  ============= */
+.container {
+  width: 100%;
+  min-height: 100vh;
+  padding: 20rpx;
+  background: linear-gradient(135deg, var(--water-blue) 0%, var(--water-light) 100%);
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+
+/* =============  按钮组件  ============= */
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24rpx 48rpx;
+  border-radius: 50rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+
+.btn:hover::before {
+  left: 100%;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+  color: white;
+  box-shadow: 0 8rpx 20rpx rgba(18, 150, 219, 0.3);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, var(--success-color) 0%, #66bb6a 100%);
+  color: white;
+  box-shadow: 0 8rpx 20rpx rgba(76, 175, 80, 0.3);
+}
+
+.btn-warning {
+  background: linear-gradient(135deg, var(--warning-color) 0%, #ffb74d 100%);
+  color: white;
+  box-shadow: 0 8rpx 20rpx rgba(255, 152, 0, 0.3);
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, var(--error-color) 0%, #e57373 100%);
+  color: white;
+  box-shadow: 0 8rpx 20rpx rgba(244, 67, 54, 0.3);
+}
+
+.btn-outline {
+  background: transparent;
+  border: 3rpx solid var(--primary-color);
+  color: var(--primary-color);
+}
+
+.btn:active {
+  transform: translateY(2rpx);
+  box-shadow: 0 4rpx 10rpx var(--shadow);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* =============  卡片组件  ============= */
+.card {
+  background: white;
+  border-radius: 20rpx;
+  box-shadow: 0 8rpx 30rpx var(--shadow);
+  padding: 30rpx;
+  margin: 20rpx 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6rpx;
+  background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+}
+
+.card-title {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 20rpx;
+}
+
+.card-content {
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* =============  游戏区域样式  ============= */
+.game-area {
+  width: 100%;
+  max-width: 750rpx;
+  margin: 0 auto;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 20rpx;
+  padding: 20rpx;
+  box-shadow: 0 10rpx 40rpx var(--shadow);
+}
+
+.game-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-gap: 4rpx;
+  background: var(--border-color);
+  border-radius: 10rpx;
+  padding: 10rpx;
+}
+
+.game-block {
+  aspect-ratio: 1;
+  border-radius: 8rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.game-block:active {
+  transform: scale(0.95);
+}
+
+/* 污染物方块样式 */
+.block-particle {
+  background: linear-gradient(135deg, var(--particle-color) 0%, #a0522d 100%);
+  color: white;
+}
+
+.block-microbe {
+  background: linear-gradient(135deg, var(--microbe-color) 0%, #32cd32 100%);
+  color: white;
+}
+
+.block-chemical {
+  background: linear-gradient(135deg, var(--chemical-color) 0%, #9370db 100%);
+  color: white;
+}
+
+.block-selected {
+  border: 4rpx solid #ffd700;
+  box-shadow: 0 0 20rpx rgba(255, 215, 0, 0.6);
+  transform: scale(1.1);
+}
+
+.block-eliminating {
+  animation: eliminate 0.5s ease-out forwards;
+}
+
+/* =============  状态显示  ============= */
+.status-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx 30rpx;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 15rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 4rpx 15rpx var(--shadow);
+}
+
+.status-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.status-label {
+  font-size: 24rpx;
+  color: var(--text-secondary);
+  margin-bottom: 8rpx;
+}
+
+.status-value {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.status-value.score {
+  color: var(--success-color);
+}
+
+.status-value.time {
+  color: var(--warning-color);
+}
+
+.status-value.time.urgent {
+  color: var(--error-color);
+  animation: pulse 1s infinite;
+}
+
+/* =============  道具栏样式  ============= */
+.powerup-bar {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 20rpx;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 15rpx;
+  margin-top: 20rpx;
+  box-shadow: 0 4rpx 15rpx var(--shadow);
+}
+
+.powerup-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 15rpx;
+  border-radius: 10rpx;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.powerup-item:active {
+  transform: scale(0.95);
+}
+
+.powerup-icon {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36rpx;
+  color: white;
+  margin-bottom: 10rpx;
+  position: relative;
+}
+
+.powerup-icon.pp {
+  background: linear-gradient(135deg, #795548 0%, #8d6e63 100%);
+}
+
+.powerup-icon.cto {
+  background: linear-gradient(135deg, #424242 0%, #616161 100%);
+}
+
+.powerup-icon.ro {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+}
+
+.powerup-count {
+  font-size: 24rpx;
+  color: var(--text-primary);
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 4rpx 12rpx;
+  border-radius: 20rpx;
+  position: absolute;
+  top: -10rpx;
+  right: -10rpx;
+  min-width: 32rpx;
+  text-align: center;
+}
+
+.powerup-count.zero {
+  background: var(--text-disabled);
+  color: white;
+}
+
+/* =============  弹窗样式  ============= */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modal {
+  background: white;
+  border-radius: 20rpx;
+  padding: 40rpx;
+  margin: 40rpx;
+  max-width: 600rpx;
+  width: 90%;
+  box-shadow: 0 20rpx 60rpx rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease-out;
+}
+
+.modal-title {
+  font-size: 40rpx;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 30rpx;
+  color: var(--text-primary);
+}
+
+.modal-content {
+  text-align: center;
+  color: var(--text-secondary);
+  margin-bottom: 40rpx;
+  line-height: 1.6;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 20rpx;
+}
+
+.modal-actions .btn {
+  flex: 1;
+}
+
+/* =============  水质检测样式  ============= */
+.water-test-container {
+  padding: 30rpx;
+  background: linear-gradient(135deg, #e8f5e8 0%, #f0f8ff 100%);
+}
+
+.test-device {
+  background: white;
+  border-radius: 20rpx;
+  padding: 40rpx;
+  margin: 20rpx 0;
+  box-shadow: 0 10rpx 30rpx var(--shadow);
+  text-align: center;
+}
+
+.test-device-icon {
+  width: 120rpx;
+  height: 120rpx;
+  margin: 0 auto 20rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 60rpx;
+  color: white;
+}
+
+.test-device-icon.tds {
+  background: linear-gradient(135deg, #2196f3 0%, #42a5f5 100%);
+}
+
+.test-device-icon.chlorine {
+  background: linear-gradient(135deg, #ff9800 0%, #ffb74d 100%);
+}
+
+.test-device-icon.ph {
+  background: linear-gradient(135deg, #9c27b0 0%, #ba68c8 100%);
+}
+
+.test-result {
+  font-size: 48rpx;
+  font-weight: 600;
+  margin: 20rpx 0;
+  color: var(--primary-color);
+}
+
+.test-description {
+  color: var(--text-secondary);
+  font-size: 28rpx;
+  line-height: 1.5;
+}
+
+/* =============  品牌展示  ============= */
+.brand-section {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+  color: white;
+  padding: 40rpx;
+  border-radius: 20rpx;
+  margin: 30rpx 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.brand-section::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+  animation: rotate 20s linear infinite;
+}
+
+.brand-logo {
+  font-size: 48rpx;
+  font-weight: 700;
+  margin-bottom: 20rpx;
+  position: relative;
+  z-index: 2;
+}
+
+.brand-slogan {
+  font-size: 32rpx;
+  margin-bottom: 10rpx;
+  position: relative;
+  z-index: 2;
+}
+
+.brand-price {
+  font-size: 56rpx;
+  font-weight: 700;
+  color: #ffd700;
+  margin: 20rpx 0;
+  position: relative;
+  z-index: 2;
+}
+
+/* =============  动画效果  ============= */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(50rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes eliminate {
+  0% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2) rotate(180deg);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(0) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10rpx);
+  }
+  60% {
+    transform: translateY(-5rpx);
+  }
+}
+
+/* =============  响应式适配  ============= */
+@media (max-width: 400px) {
+  .container {
+    padding: 15rpx;
+  }
+  
+  .modal {
+    margin: 20rpx;
+    padding: 30rpx;
+  }
+  
+  .btn {
+    padding: 20rpx 40rpx;
+    font-size: 30rpx;
+  }
+}
+
+/* =============  工具类  ============= */
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+.mt-10 { margin-top: 10rpx; }
+.mt-20 { margin-top: 20rpx; }
+.mt-30 { margin-top: 30rpx; }
+.mb-10 { margin-bottom: 10rpx; }
+.mb-20 { margin-bottom: 20rpx; }
+.mb-30 { margin-bottom: 30rpx; }
+
+.p-10 { padding: 10rpx; }
+.p-20 { padding: 20rpx; }
+.p-30 { padding: 30rpx; }
+
+.w-100 { width: 100%; }
+.h-100 { height: 100%; }
+
+.opacity-50 { opacity: 0.5; }
+.opacity-80 { opacity: 0.8; }
+
+.hidden { display: none !important; }
+.visible { display: block !important; }

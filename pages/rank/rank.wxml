@@ -1,0 +1,314 @@
+<!-- pages/rank/rank.wxml -->
+<view class=\"container rank-page\">
+  <!-- 页面标题 -->
+  <view class=\"page-header\">
+    <view class=\"header-content\">
+      <text class=\"page-title\">🏆 排行榜</text>
+      <text class=\"page-subtitle\">与好友比拼净水技能</text>
+    </view>
+    
+    <!-- 刷新按钮 -->
+    <view class=\"refresh-btn\" bindtap=\"onRefreshRank\">
+      <text class=\"refresh-icon\">🔄</text>
+    </view>
+  </view>
+
+  <!-- 排行榜标签 -->
+  <view class=\"rank-tabs\">
+    <view 
+      class=\"tab-item {{currentTab === 'score' ? 'active' : ''}}\"
+      data-tab=\"score\"
+      bindtap=\"onSwitchTab\"
+    >
+      <text class=\"tab-icon\">🌟</text>
+      <text class=\"tab-text\">得分榜</text>
+    </view>
+    
+    <view 
+      class=\"tab-item {{currentTab === 'level' ? 'active' : ''}}\"
+      data-tab=\"level\"
+      bindtap=\"onSwitchTab\"
+    >
+      <text class=\"tab-icon\">🚀</text>
+      <text class=\"tab-text\">关卡榜</text>
+    </view>
+    
+    <view 
+      class=\"tab-item {{currentTab === 'friends' ? 'active' : ''}}\"
+      data-tab=\"friends\"
+      bindtap=\"onSwitchTab\"
+    >
+      <text class=\"tab-icon\">👥</text>
+      <text class=\"tab-text\">好友榜</text>
+    </view>
+  </view>
+
+  <!-- 我的排名信息 -->
+  <view class=\"my-rank-section\">
+    <view class=\"my-rank-card\">
+      <view class=\"rank-avatar\">
+        <image class=\"avatar-image\" src=\"{{userInfo.avatarUrl || '/images/default_avatar.png'}}\" />
+        <view class=\"rank-badge\">
+          <text class=\"rank-number\"># {{myRank.position || '---'}}</text>
+        </view>
+      </view>
+      
+      <view class=\"rank-info\">
+        <text class=\"user-name\">{{userInfo.nickName || '游客'}}</text>
+        <view class=\"user-stats\">
+          <text class=\"stat-item\" wx:if=\"{{currentTab === 'score'}}\">最高得分: {{myRank.score}}</text>
+          <text class=\"stat-item\" wx:elif=\"{{currentTab === 'level'}}\">最高关卡: {{myRank.level}}</text>
+          <text class=\"stat-item\" wx:else>好友数: {{myRank.friendsCount}}</text>
+        </view>
+      </view>
+      
+      <view class=\"rank-trend\">
+        <view class=\"trend-arrow {{myRank.trend}}\">
+          <text wx:if=\"{{myRank.trend === 'up'}}\">↗️</text>
+          <text wx:elif=\"{{myRank.trend === 'down'}}\">↘️</text>
+          <text wx:else>➡️</text>
+        </view>
+        <text class=\"trend-text\">{{myRank.trendText}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 排行榜列表 -->
+  <view class=\"rank-list-section\">
+    <!-- 前三名特殊显示 -->
+    <view class=\"podium\" wx:if=\"{{rankList.length > 0}}\">
+      <!-- 第二名 -->
+      <view class=\"podium-item second\" wx:if=\"{{rankList[1]}}\">
+        <view class=\"podium-rank\">🥈</view>
+        <view class=\"podium-avatar\">
+          <image class=\"avatar-image\" src=\"{{rankList[1].avatarUrl}}\" />
+        </view>
+        <text class=\"podium-name\">{{rankList[1].nickName}}</text>
+        <text class=\"podium-score\">{{getCurrentTabValue(rankList[1])}}</text>
+      </view>
+      
+      <!-- 第一名 -->
+      <view class=\"podium-item first\" wx:if=\"{{rankList[0]}}\">
+        <view class=\"podium-rank\">🥇</view>
+        <view class=\"podium-avatar champion\">
+          <image class=\"avatar-image\" src=\"{{rankList[0].avatarUrl}}\" />
+          <view class=\"champion-crown\">👑</view>
+        </view>
+        <text class=\"podium-name\">{{rankList[0].nickName}}</text>
+        <text class=\"podium-score\">{{getCurrentTabValue(rankList[0])}}</text>
+      </view>
+      
+      <!-- 第三名 -->
+      <view class=\"podium-item third\" wx:if=\"{{rankList[2]}}\">
+        <view class=\"podium-rank\">🥉</view>
+        <view class=\"podium-avatar\">
+          <image class=\"avatar-image\" src=\"{{rankList[2].avatarUrl}}\" />
+        </view>
+        <text class=\"podium-name\">{{rankList[2].nickName}}</text>
+        <text class=\"podium-score\">{{getCurrentTabValue(rankList[2])}}</text>
+      </view>
+    </view>
+    
+    <!-- 排行榜其余名次 -->
+    <view class=\"rank-list\">
+      <view 
+        class=\"rank-item {{item.isCurrentUser ? 'current-user' : ''}}\"
+        wx:for=\"{{rankList}}\"
+        wx:key=\"openId\"
+        wx:if=\"{{index >= 3}}\"
+        data-user=\"{{item}}\"
+        bindtap=\"onViewUserProfile\"
+      >
+        <view class=\"rank-position\">
+          <text class=\"position-number\">{{index + 1}}</text>
+        </view>
+        
+        <view class=\"user-avatar\">
+          <image class=\"avatar-image\" src=\"{{item.avatarUrl}}\" />
+          <view class=\"online-indicator\" wx:if=\"{{item.isOnline}}\"></view>
+        </view>
+        
+        <view class=\"user-info\">
+          <text class=\"user-name\">{{item.nickName}}</text>
+          <view class=\"user-details\">
+            <text class=\"detail-item\" wx:if=\"{{currentTab === 'score'}}\">得分: {{item.totalScore}}</text>
+            <text class=\"detail-item\" wx:elif=\"{{currentTab === 'level'}}\">关卡: {{item.maxLevel}}</text>
+            <text class=\"detail-item\" wx:else>胜率: {{item.winRate}}%</text>
+          </view>
+        </view>
+        
+        <view class=\"rank-value\">
+          <text class=\"value-main\">{{getCurrentTabValue(item)}}</text>
+          <text class=\"value-label\">
+            <text wx:if=\"{{currentTab === 'score'}}\">分</text>
+            <text wx:elif=\"{{currentTab === 'level'}}\">关</text>
+            <text wx:else>胜</text>
+          </text>
+        </view>
+        
+        <view class=\"rank-actions\">
+          <button 
+            class=\"action-btn challenge-btn\"
+            data-user=\"{{item}}\"
+            bindtap=\"onChallengeUser\"
+            wx:if=\"{{!item.isCurrentUser}}\"
+          >
+            挑战
+          </button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 排行榜为空 -->
+  <view class=\"empty-rank\" wx:if=\"{{rankList.length === 0}}\">
+    <text class=\"empty-icon\">📊</text>
+    <text class=\"empty-text\">暂无排行数据</text>
+    <text class=\"empty-desc\">快去游戏中提升分数吧！</text>
+    <navigator class=\"btn btn-primary\" url=\"/pages/game/game\" hover-class=\"navigator-hover\">
+      开始游戏
+    </navigator>
+  </view>
+
+  <!-- 底部功能区 -->
+  <view class=\"bottom-actions\">
+    <!-- 分享成就 -->
+    <button class=\"action-card\" bindtap=\"onShareRank\" wx:if=\"{{myRank.position <= 10}}\">
+      <view class=\"action-icon\">📤</view>
+      <view class=\"action-text\">
+        <text class=\"action-title\">分享成就</text>
+        <text class=\"action-desc\">炫耀你的排名</text>
+      </view>
+    </button>
+    
+    <!-- 邀请好友 -->
+    <button class=\"action-card\" bindtap=\"onInviteFriends\">
+      <view class=\"action-icon\">👥</view>
+      <view class=\"action-text\">
+        <text class=\"action-title\">邀请好友</text>
+        <text class=\"action-desc\">一起来比拼</text>
+      </view>
+    </button>
+    
+    <!-- 查看奖励 -->
+    <button class=\"action-card\" bindtap=\"onViewRewards\">
+      <view class=\"action-icon\">🎁</view>
+      <view class=\"action-text\">
+        <text class=\"action-title\">排名奖励</text>
+        <text class=\"action-desc\">查看奖励规则</text>
+      </view>
+    </button>
+  </view>
+</view>
+
+<!-- 用户详情弹窗 -->
+<view class=\"modal-overlay\" wx:if=\"{{showUserModal}}\" bindtap=\"onHideUserModal\">
+  <view class=\"modal user-modal\" catchtap=\"stopPropagation\">
+    <view class=\"modal-header\">
+      <image class=\"user-detail-avatar\" src=\"{{selectedUser.avatarUrl}}\" />
+      <text class=\"user-detail-name\">{{selectedUser.nickName}}</text>
+    </view>
+    
+    <view class=\"modal-content\">
+      <view class=\"user-stats-grid\">
+        <view class=\"stat-card\">
+          <text class=\"stat-value\">{{selectedUser.totalScore}}</text>
+          <text class=\"stat-label\">最高得分</text>
+        </view>
+        
+        <view class=\"stat-card\">
+          <text class=\"stat-value\">{{selectedUser.maxLevel}}</text>
+          <text class=\"stat-label\">最高关卡</text>
+        </view>
+        
+        <view class=\"stat-card\">
+          <text class=\"stat-value\">{{selectedUser.gamesPlayed}}</text>
+          <text class=\"stat-label\">游戏次数</text>
+        </view>
+        
+        <view class=\"stat-card\">
+          <text class=\"stat-value\">{{selectedUser.winRate}}%</text>
+          <text class=\"stat-label\">胜率</text>
+        </view>
+      </view>
+      
+      <view class=\"user-achievements\" wx:if=\"{{selectedUser.achievements.length > 0}}\">
+        <text class=\"achievements-title\">🏅 成就徽章</text>
+        <view class=\"achievements-list\">
+          <view 
+            class=\"achievement-badge\"
+            wx:for=\"{{selectedUser.achievements}}\"
+            wx:key=\"id\"
+          >
+            <text class=\"badge-icon\">{{item.icon}}</text>
+            <text class=\"badge-name\">{{item.name}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+    
+    <view class=\"modal-actions\">
+      <button class=\"btn btn-outline\" bindtap=\"onHideUserModal\">关闭</button>
+      <button class=\"btn btn-primary\" data-user=\"{{selectedUser}}\" bindtap=\"onChallengeUser\">
+        发起挑战
+      </button>
+    </view>
+  </view>
+</view>
+
+<!-- 奖励规则弹窗 -->
+<view class=\"modal-overlay\" wx:if=\"{{showRewardsModal}}\" bindtap=\"onHideRewardsModal\">
+  <view class=\"modal rewards-modal\" catchtap=\"stopPropagation\">
+    <view class=\"modal-title\">🎁 排名奖励规则</view>
+    
+    <view class=\"modal-content\">
+      <view class=\"rewards-list\">
+        <view class=\"reward-tier\">
+          <text class=\"tier-rank\">🥇 第1名</text>
+          <view class=\"tier-rewards\">
+            <text class=\"reward-item\">• 1000金币</text>
+            <text class=\"reward-item\">• 专属称号</text>
+            <text class=\"reward-item\">• 高级道具x5</text>
+          </view>
+        </view>
+        
+        <view class=\"reward-tier\">
+          <text class=\"tier-rank\">🥈 第2-3名</text>
+          <view class=\"tier-rewards\">
+            <text class=\"reward-item\">• 500金币</text>
+            <text class=\"reward-item\">• 荣誉徽章</text>
+            <text class=\"reward-item\">• 中级道具x3</text>
+          </view>
+        </view>
+        
+        <view class=\"reward-tier\">
+          <text class=\"tier-rank\">🏅 第4-10名</text>
+          <view class=\"tier-rewards\">
+            <text class=\"reward-item\">• 200金币</text>
+            <text class=\"reward-item\">• 进步奖励</text>
+            <text class=\"reward-item\">• 初级道具x2</text>
+          </view>
+        </view>
+        
+        <view class=\"reward-tier\">
+          <text class=\"tier-rank\">🎯 第11-50名</text>
+          <view class=\"tier-rewards\">
+            <text class=\"reward-item\">• 50金币</text>
+            <text class=\"reward-item\">• 参与奖励</text>
+          </view>
+        </view>
+      </view>
+      
+      <view class=\"reward-note\">
+        <text class=\"note-title\">📢 结算说明</text>
+        <text class=\"note-text\">• 每周日晚上22:00结算奖励</text>
+        <text class=\"note-text\">• 奖励将自动发放到账户</text>
+        <text class=\"note-text\">• 需要完成至少5局游戏才能获得奖励</text>
+      </view>
+    </view>
+    
+    <view class=\"modal-actions\">
+      <button class=\"btn btn-primary\" bindtap=\"onHideRewardsModal\">知道了</button>
+    </view>
+  </view>
+</view>"

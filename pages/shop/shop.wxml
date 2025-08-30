@@ -1,0 +1,408 @@
+<!-- pages/shop/shop.wxml -->
+<view class=\"container shop-page\">
+  <!-- 页面标题 -->
+  <view class=\"page-header\">
+    <view class=\"header-content\">
+      <text class=\"page-title\">🛒 道具商城</text>
+      <text class=\"page-subtitle\">购买游戏道具，提升通关效率</text>
+    </view>
+    
+    <!-- 用户金币 -->
+    <view class=\"user-coins\">
+      <text class=\"coins-icon\">💰</text>
+      <text class=\"coins-amount\">{{userCoins}}</text>
+    </view>
+  </view>
+
+  <!-- 每日免费获取 -->
+  <view class=\"daily-free-section\">
+    <view class=\"section-title\">
+      <text class=\"title-text\">🎁 每日免费</text>
+      <text class=\"title-subtitle\">每天可免费获取道具</text>
+    </view>
+    
+    <view class=\"free-methods\">
+      <!-- 看广告获得 -->
+      <view class=\"free-method-card\">
+        <view class=\"method-header\">
+          <text class=\"method-icon\">📺</text>
+          <text class=\"method-title\">看广告获得</text>
+        </view>
+        
+        <view class=\"method-content\">
+          <text class=\"method-desc\">观看30秒广告获得随机道具</text>
+          <view class=\"progress-info\">
+            <text class=\"progress-text\">今日剩余：{{remainingAds}}/5次</text>
+            <progress percent=\"{{(5 - remainingAds) * 20}}\" show-info=\"false\" stroke-width=\"6\" color=\"#4caf50\" />
+          </view>
+        </view>
+        
+        <button 
+          class=\"btn btn-primary method-btn {{remainingAds <= 0 ? 'disabled' : ''}}\"
+          bindtap=\"onWatchAdForReward\"
+          disabled=\"{{remainingAds <= 0}}\"
+        >
+          {{remainingAds > 0 ? '观看广告' : '今日已用完'}}
+        </button>
+      </view>
+      
+      <!-- 分享获得 -->
+      <view class=\"free-method-card\">
+        <view class=\"method-header\">
+          <text class=\"method-icon\">📤</text>
+          <text class=\"method-title\">分享获得</text>
+        </view>
+        
+        <view class=\"method-content\">
+          <text class=\"method-desc\">分享游戏给好友获得道具</text>
+          <view class=\"progress-info\">
+            <text class=\"progress-text\">今日剩余：{{remainingShares}}/3次</text>
+            <progress percent=\"{{(3 - remainingShares) * 33.33}}\" show-info=\"false\" stroke-width=\"6\" color=\"#2196f3\" />
+          </view>
+        </view>
+        
+        <button 
+          class=\"btn btn-success method-btn {{remainingShares <= 0 ? 'disabled' : ''}}\"
+          bindtap=\"onShareForReward\"
+          disabled=\"{{remainingShares <= 0}}\"
+        >
+          {{remainingShares > 0 ? '分享游戏' : '今日已用完'}}
+        </button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 道具商品 -->
+  <view class=\"products-section\">
+    <view class=\"section-title\">
+      <text class=\"title-text\">🧰 道具商品</text>
+      <text class=\"title-subtitle\">使用金币购买游戏道具</text>
+    </view>
+    
+    <view class=\"products-grid\">
+      <!-- PP棉炸弹 -->
+      <view class=\"product-card\">
+        <view class=\"product-header\">
+          <view class=\"product-icon pp\">
+            <text class=\"icon-symbol\">🧽</text>
+          </view>
+          <view class=\"product-badge\" wx:if=\"{{products.pp.discount}}\">特惠</view>
+        </view>
+        
+        <view class=\"product-info\">
+          <text class=\"product-name\">PP棉炸弹</text>
+          <text class=\"product-desc\">清除所有颗粒污染物</text>
+          
+          <view class=\"product-effects\">
+            <text class=\"effect-item\">✓ 3x3范围清除</text>
+            <text class=\"effect-item\">✓ 对颗粒物有效</text>
+            <text class=\"effect-item\">✓ 即时生效</text>
+          </view>
+        </view>
+        
+        <view class=\"product-footer\">
+          <view class=\"product-price\">
+            <text class=\"price-currency\">💰</text>
+            <text class=\"price-amount\">{{products.pp.price}}</text>
+            <text class=\"price-unit\">个</text>
+          </view>
+          
+          <view class=\"quantity-selector\">
+            <button class=\"quantity-btn\" data-product=\"pp\" data-action=\"decrease\" bindtap=\"onQuantityChange\">-</button>
+            <text class=\"quantity-value\">{{products.pp.quantity}}</text>
+            <button class=\"quantity-btn\" data-product=\"pp\" data-action=\"increase\" bindtap=\"onQuantityChange\">+</button>
+          </view>
+          
+          <button 
+            class=\"btn btn-primary buy-btn\"
+            data-product=\"pp\"
+            bindtap=\"onBuyProduct\"
+          >
+            购买
+          </button>
+        </view>
+      </view>
+      
+      <!-- CTO激光 -->
+      <view class=\"product-card\">
+        <view class=\"product-header\">
+          <view class=\"product-icon cto\">
+            <text class=\"icon-symbol\">⚡</text>
+          </view>
+          <view class=\"product-badge recommended\" wx:if=\"{{products.cto.recommended}}\">推荐</view>
+        </view>
+        
+        <view class=\"product-info\">
+          <text class=\"product-name\">CTO激光</text>
+          <text class=\"product-desc\">清除整行或整列微生物</text>
+          
+          <view class=\"product-effects\">
+            <text class=\"effect-item\">✓ 直线清除</text>
+            <text class=\"effect-item\">✓ 对微生物有效</text>
+            <text class=\"effect-item\">✓ 连击加分</text>
+          </view>
+        </view>
+        
+        <view class=\"product-footer\">
+          <view class=\"product-price\">
+            <text class=\"price-currency\">💰</text>
+            <text class=\"price-amount\">{{products.cto.price}}</text>
+            <text class=\"price-unit\">个</text>
+          </view>
+          
+          <view class=\"quantity-selector\">
+            <button class=\"quantity-btn\" data-product=\"cto\" data-action=\"decrease\" bindtap=\"onQuantityChange\">-</button>
+            <text class=\"quantity-value\">{{products.cto.quantity}}</text>
+            <button class=\"quantity-btn\" data-product=\"cto\" data-action=\"increase\" bindtap=\"onQuantityChange\">+</button>
+          </view>
+          
+          <button 
+            class=\"btn btn-primary buy-btn\"
+            data-product=\"cto\"
+            bindtap=\"onBuyProduct\"
+          >
+            购买
+          </button>
+        </view>
+      </view>
+      
+      <!-- RO清洁波 -->
+      <view class=\"product-card\">
+        <view class=\"product-header\">
+          <view class=\"product-icon ro\">
+            <text class=\"icon-symbol\">🌊</text>
+          </view>
+          <view class=\"product-badge premium\" wx:if=\"{{products.ro.premium}}\">高级</view>
+        </view>
+        
+        <view class=\"product-info\">
+          <text class=\"product-name\">RO清洁波</text>
+          <text class=\"product-desc\">清除全屏化学污染物</text>
+          
+          <view class=\"product-effects\">
+            <text class=\"effect-item\">✓ 全屏清除</text>
+            <text class=\"effect-item\">✓ 对化学污染有效</text>
+            <text class=\"effect-item\">✓ 最强效果</text>
+          </view>
+        </view>
+        
+        <view class=\"product-footer\">
+          <view class=\"product-price\">
+            <text class=\"price-currency\">💰</text>
+            <text class=\"price-amount\">{{products.ro.price}}</text>
+            <text class=\"price-unit\">个</text>
+          </view>
+          
+          <view class=\"quantity-selector\">
+            <button class=\"quantity-btn\" data-product=\"ro\" data-action=\"decrease\" bindtap=\"onQuantityChange\">-</button>
+            <text class=\"quantity-value\">{{products.ro.quantity}}</text>
+            <button class=\"quantity-btn\" data-product=\"ro\" data-action=\"increase\" bindtap=\"onQuantityChange\">+</button>
+          </view>
+          
+          <button 
+            class=\"btn btn-primary buy-btn\"
+            data-product=\"ro\"
+            bindtap=\"onBuyProduct\"
+          >
+            购买
+          </button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 套餐优惠 -->
+  <view class=\"packages-section\">
+    <view class=\"section-title\">
+      <text class=\"title-text\">📦 套餐优惠</text>
+      <text class=\"title-subtitle\">组合购买更划算</text>
+    </view>
+    
+    <view class=\"packages-list\">
+      <!-- 新手套餐 -->
+      <view class=\"package-card starter\">
+        <view class=\"package-header\">
+          <text class=\"package-title\">🌟 新手套餐</text>
+          <view class=\"package-badge\">限时</view>
+        </view>
+        
+        <view class=\"package-content\">
+          <text class=\"package-desc\">适合新手玩家的道具组合</text>
+          
+          <view class=\"package-items\">
+            <text class=\"package-item\">• PP棉炸弹 x3</text>
+            <text class=\"package-item\">• CTO激光 x2</text>
+            <text class=\"package-item\">• 金币 x200</text>
+          </view>
+          
+          <view class=\"package-price\">
+            <text class=\"original-price\">原价：💰480</text>
+            <text class=\"discounted-price\">现价：💰299</text>
+          </view>
+        </view>
+        
+        <button class=\"btn btn-warning package-btn\" data-package=\"starter\" bindtap=\"onBuyPackage\">
+          立即购买
+        </button>
+      </view>
+      
+      <!-- 进阶套餐 -->
+      <view class=\"package-card advanced\">
+        <view class=\"package-header\">
+          <text class=\"package-title\">⭐ 进阶套餐</text>
+          <view class=\"package-badge\">热门</view>
+        </view>
+        
+        <view class=\"package-content\">
+          <text class=\"package-desc\">适合有经验玩家的高级组合</text>
+          
+          <view class=\"package-items\">
+            <text class=\"package-item\">• PP棉炸弹 x5</text>
+            <text class=\"package-item\">• CTO激光 x5</text>
+            <text class=\"package-item\">• RO清洁波 x2</text>
+            <text class=\"package-item\">• 金币 x500</text>
+          </view>
+          
+          <view class=\"package-price\">
+            <text class=\"original-price\">原价：💰1200</text>
+            <text class=\"discounted-price\">现价：💰799</text>
+          </view>
+        </view>
+        
+        <button class=\"btn btn-success package-btn\" data-package=\"advanced\" bindtap=\"onBuyPackage\">
+          立即购买
+        </button>
+      </view>
+      
+      <!-- 大师套餐 -->
+      <view class=\"package-card master\">
+        <view class=\"package-header\">
+          <text class=\"package-title\">👑 大师套餐</text>
+          <view class=\"package-badge\">至尊</view>
+        </view>
+        
+        <view class=\"package-content\">
+          <text class=\"package-desc\">终极玩家的专属选择</text>
+          
+          <view class=\"package-items\">
+            <text class=\"package-item\">• PP棉炸弹 x10</text>
+            <text class=\"package-item\">• CTO激光 x10</text>
+            <text class=\"package-item\">• RO清洁波 x5</text>
+            <text class=\"package-item\">• 金币 x1000</text>
+            <text class=\"package-item\">• 专属头像框</text>
+          </view>
+          
+          <view class=\"package-price\">
+            <text class=\"original-price\">原价：💰2500</text>
+            <text class=\"discounted-price\">现价：💰1599</text>
+          </view>
+        </view>
+        
+        <button class=\"btn btn-primary package-btn\" data-package=\"master\" bindtap=\"onBuyPackage\">
+          立即购买
+        </button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 金币购买 -->
+  <view class=\"coins-section\">
+    <view class=\"section-title\">
+      <text class=\"title-text\">💰 金币充值</text>
+      <text class=\"title-subtitle\">获得更多金币购买道具</text>
+    </view>
+    
+    <view class=\"coins-options\">
+      <view 
+        class=\"coin-option\"
+        wx:for=\"{{coinPackages}}\"
+        wx:key=\"id\"
+        data-package=\"{{item}}\"
+        bindtap=\"onBuyCoins\"
+      >
+        <view class=\"coin-amount\">💰{{item.amount}}</view>
+        <view class=\"coin-price\">¥{{item.price}}</view>
+        <view class=\"coin-bonus\" wx:if=\"{{item.bonus}}\">+{{item.bonus}}赠送</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 我的道具 -->
+  <view class=\"inventory-section\">
+    <view class=\"section-title\">
+      <text class=\"title-text\">🎒 我的道具</text>
+      <text class=\"title-subtitle\">查看已拥有的道具</text>
+    </view>
+    
+    <view class=\"inventory-list\">
+      <view class=\"inventory-item\">
+        <view class=\"item-icon pp\">
+          <text class=\"icon-symbol\">🧽</text>
+        </view>
+        <view class=\"item-info\">
+          <text class=\"item-name\">PP棉炸弹</text>
+          <text class=\"item-count\">拥有：{{userPowerups.pp || 0}}个</text>
+        </view>
+      </view>
+      
+      <view class=\"inventory-item\">
+        <view class=\"item-icon cto\">
+          <text class=\"icon-symbol\">⚡</text>
+        </view>
+        <view class=\"item-info\">
+          <text class=\"item-name\">CTO激光</text>
+          <text class=\"item-count\">拥有：{{userPowerups.cto || 0}}个</text>
+        </view>
+      </view>
+      
+      <view class=\"inventory-item\">
+        <view class=\"item-icon ro\">
+          <text class=\"icon-symbol\">🌊</text>
+        </view>
+        <view class=\"item-info\">
+          <text class=\"item-name\">RO清洁波</text>
+          <text class=\"item-count\">拥有：{{userPowerups.ro || 0}}个</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>
+
+<!-- 购买确认弹窗 -->
+<view class=\"modal-overlay\" wx:if=\"{{showPurchaseModal}}\" bindtap=\"onHidePurchaseModal\">
+  <view class=\"modal purchase-modal\" catchtap=\"stopPropagation\">
+    <view class=\"modal-title\">确认购买</view>
+    
+    <view class=\"modal-content\">
+      <view class=\"purchase-item\">
+        <view class=\"purchase-icon {{purchaseData.type}}\">
+          <text class=\"icon-symbol\">{{purchaseData.symbol}}</text>
+        </view>
+        <view class=\"purchase-info\">
+          <text class=\"purchase-name\">{{purchaseData.name}}</text>
+          <text class=\"purchase-quantity\">数量：{{purchaseData.quantity}}个</text>
+        </view>
+      </view>
+      
+      <view class=\"purchase-total\">
+        <text class=\"total-label\">总价：</text>
+        <text class=\"total-amount\">💰{{purchaseData.totalPrice}}</text>
+      </view>
+      
+      <view class=\"balance-check\" wx:if=\"{{purchaseData.totalPrice > userCoins}}\">
+        <text class=\"insufficient-text\">余额不足，需要充值</text>
+      </view>
+    </view>
+    
+    <view class=\"modal-actions\">
+      <button class=\"btn btn-outline\" bindtap=\"onHidePurchaseModal\">取消</button>
+      <button 
+        class=\"btn btn-primary {{purchaseData.totalPrice > userCoins ? 'disabled' : ''}}\"
+        bindtap=\"onConfirmPurchase\"
+        disabled=\"{{purchaseData.totalPrice > userCoins}}\"
+      >
+        {{purchaseData.totalPrice > userCoins ? '余额不足' : '确认购买'}}
+      </button>
+    </view>
+  </view>
+</view>"

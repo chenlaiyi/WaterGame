@@ -1,0 +1,945 @@
+/* pages/waterTest/waterTest.wxss */
+
+.water-test-page {
+  background: linear-gradient(135deg, #e8f5e8 0%, #e3f2fd 50%, #f3e5f5 100%);
+  min-height: 100vh;
+  padding: 20rpx;
+}
+
+/* =============  页面头部  ============= */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+  border-radius: 20rpx;
+  padding: 30rpx;
+  margin-bottom: 30rpx;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.page-header::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 80%;
+  height: 200%;
+  background: radial-gradient(ellipse, rgba(255,255,255,0.1) 0%, transparent 70%);
+  animation: float 6s ease-in-out infinite;
+}
+
+.header-content {
+  position: relative;
+  z-index: 2;
+}
+
+.page-title {
+  display: block;
+  font-size: 40rpx;
+  font-weight: 700;
+  margin-bottom: 8rpx;
+}
+
+.page-subtitle {
+  font-size: 28rpx;
+  opacity: 0.9;
+}
+
+.back-btn {
+  width: 60rpx;
+  height: 60rpx;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  z-index: 2;
+  transition: all 0.3s ease;
+}
+
+.back-btn:active {
+  transform: scale(0.95);
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.back-icon {
+  font-size: 32rpx;
+  color: white;
+  font-weight: 600;
+}
+
+/* =============  检测项目网格  ============= */
+.test-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20rpx;
+  margin-bottom: 30rpx;
+}
+
+.test-item {
+  background: white;
+  border-radius: 20rpx;
+  padding: 25rpx;
+  box-shadow: 0 8rpx 25rpx rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.test-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4rpx;
+  background: var(--border-color);
+  transition: all 0.3s ease;
+}
+
+.test-item.active::before {
+  background: var(--primary-color);
+}
+
+.test-item:active {
+  transform: translateY(-5rpx);
+  box-shadow: 0 15rpx 35rpx rgba(0, 0, 0, 0.15);
+}
+
+.test-device-icon {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 15rpx;
+  color: white;
+  font-size: 36rpx;
+}
+
+.test-device-icon.tds {
+  background: linear-gradient(135deg, #2196f3 0%, #42a5f5 100%);
+}
+
+.test-device-icon.chlorine {
+  background: linear-gradient(135deg, #ff9800 0%, #ffb74d 100%);
+}
+
+.test-device-icon.ph {
+  background: linear-gradient(135deg, #9c27b0 0%, #ba68c8 100%);
+}
+
+.test-device-icon.mineral {
+  background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
+}
+
+.test-device-icon.electrolysis {
+  background: linear-gradient(135deg, #f44336 0%, #e57373 100%);
+}
+
+.test-info {
+  margin-bottom: 15rpx;
+}
+
+.test-name {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 5rpx;
+}
+
+.test-desc {
+  font-size: 24rpx;
+  color: var(--text-secondary);
+}
+
+.test-status {
+  text-align: right;
+}
+
+.status-text {
+  font-size: 24rpx;
+  padding: 4rpx 12rpx;
+  border-radius: 20rpx;
+  background: var(--bg-light);
+  color: var(--text-secondary);
+}
+
+.status-text.excellent {
+  background: rgba(76, 175, 80, 0.1);
+  color: var(--success-color);
+}
+
+.status-text.good {
+  background: rgba(139, 195, 74, 0.1);
+  color: #8bc34a;
+}
+
+.status-text.average {
+  background: rgba(255, 152, 0, 0.1);
+  color: var(--warning-color);
+}
+
+.status-text.poor {
+  background: rgba(244, 67, 54, 0.1);
+  color: var(--error-color);
+}
+
+/* =============  检测操作区域  ============= */
+.test-operation-area {
+  background: white;
+  border-radius: 20rpx;
+  padding: 30rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 10rpx 30rpx rgba(0, 0, 0, 0.1);
+}
+
+.test-title {
+  text-align: center;
+  margin-bottom: 30rpx;
+}
+
+.title-text {
+  display: block;
+  font-size: 36rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8rpx;
+}
+
+.title-subtitle {
+  font-size: 28rpx;
+  color: var(--text-secondary);
+}
+
+.test-area {
+  margin-bottom: 30rpx;
+}
+
+/* TDS检测样式 */
+.water-container {
+  width: 300rpx;
+  height: 200rpx;
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  border-radius: 20rpx;
+  margin: 0 auto 30rpx;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 4rpx solid #2196f3;
+}
+
+.water-surface {
+  font-size: 60rpx;
+  animation: waterFlow 3s ease-in-out infinite;
+}
+
+.tds-pen {
+  position: absolute;
+  top: -20rpx;
+  right: 20rpx;
+  width: 60rpx;
+  height: 120rpx;
+  background: #666;
+  border-radius: 10rpx;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 10rpx;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tds-pen.testing {
+  animation: penTest 2s ease-in-out;
+}
+
+.tds-pen:active {
+  transform: translateY(5rpx);
+}
+
+.pen-tip {
+  font-size: 24rpx;
+}
+
+.test-result-display {
+  text-align: center;
+  background: var(--bg-light);
+  border-radius: 15rpx;
+  padding: 25rpx;
+}
+
+.result-label {
+  display: block;
+  font-size: 24rpx;
+  color: var(--text-secondary);
+  margin-bottom: 10rpx;
+}
+
+.result-value {
+  display: block;
+  font-size: 48rpx;
+  font-weight: 700;
+  margin-bottom: 10rpx;
+}
+
+.result-value.excellent {
+  color: var(--success-color);
+}
+
+.result-value.good {
+  color: #8bc34a;
+}
+
+.result-value.average {
+  color: var(--warning-color);
+}
+
+.result-value.poor {
+  color: var(--error-color);
+}
+
+.result-description {
+  font-size: 26rpx;
+  color: var(--text-secondary);
+}
+
+/* 余氯检测样式 */
+.reagent-bottle {
+  position: absolute;
+  top: -40rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60rpx;
+  height: 80rpx;
+  background: #ff9800;
+  border-radius: 10rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.reagent-bottle:active {
+  transform: translateX(-50%) scale(0.95);
+}
+
+.bottle-icon {
+  font-size: 24rpx;
+  color: white;
+}
+
+.drop-animation {
+  position: absolute;
+  bottom: -20rpx;
+  animation: dropFall 1s ease-in;
+}
+
+.bubbles {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.bubble {
+  position: absolute;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 20rpx;
+  animation: bubbleFloat 2s ease-in-out infinite;
+}
+
+.bubble:nth-child(1) { left: -30rpx; animation-delay: 0s; }
+.bubble:nth-child(2) { left: -10rpx; animation-delay: 0.5s; }
+.bubble:nth-child(3) { left: 10rpx; animation-delay: 1s; }
+.bubble:nth-child(4) { left: 30rpx; animation-delay: 1.5s; }
+
+/* pH检测样式 */
+.water-surface.acidic {
+  color: #f44336;
+}
+
+.water-surface.neutral {
+  color: #4caf50;
+}
+
+.water-surface.alkaline {
+  color: #2196f3;
+}
+
+.ph-paper {
+  position: absolute;
+  bottom: 10rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40rpx;
+  height: 60rpx;
+  background: white;
+  border-radius: 5rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2rpx solid #ddd;
+}
+
+.ph-paper.testing {
+  animation: paperDip 2s ease-in-out;
+}
+
+.ph-paper:active {
+  transform: translateX(-50%) translateY(5rpx);
+}
+
+.paper-icon {
+  font-size: 20rpx;
+}
+
+.ph-scale {
+  display: flex;
+  justify-content: space-between;
+  margin: 20rpx 0;
+  padding: 0 30rpx;
+}
+
+.scale-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.scale-color {
+  width: 30rpx;
+  height: 30rpx;
+  border-radius: 50%;
+  margin-bottom: 8rpx;
+  border: 2rpx solid #ddd;
+}
+
+.scale-label {
+  font-size: 20rpx;
+  color: var(--text-secondary);
+}
+
+/* 矿物质检测样式 */
+.mineral-particles {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.mineral-particle {
+  position: absolute;
+  font-size: 16rpx;
+  animation: mineralFloat 3s ease-in-out infinite;
+}
+
+.mineral-particle.calcium {
+  color: #4caf50;
+}
+
+.mineral-particle.magnesium {
+  color: #2196f3;
+}
+
+.mineral-particle.iron {
+  color: #ff9800;
+}
+
+.mineral-particle.zinc {
+  color: #9c27b0;
+}
+
+.mineral-detector {
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 15rpx;
+  padding: 15rpx 25rpx;
+  font-size: 24rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20rpx auto;
+  transition: all 0.3s ease;
+}
+
+.mineral-detector:active {
+  transform: scale(0.95);
+}
+
+.detector-icon {
+  font-size: 28rpx;
+  margin-bottom: 5rpx;
+}
+
+.detector-text {
+  font-size: 20rpx;
+}
+
+.mineral-composition {
+  background: var(--bg-light);
+  border-radius: 15rpx;
+  padding: 25rpx;
+  margin-top: 20rpx;
+}
+
+.composition-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 20rpx;
+  display: block;
+}
+
+.mineral-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15rpx;
+}
+
+.mineral-item {
+  display: flex;
+  align-items: center;
+  gap: 15rpx;
+}
+
+.mineral-name {
+  width: 100rpx;
+  font-size: 24rpx;
+  color: var(--text-primary);
+}
+
+.mineral-bar {
+  flex: 1;
+  height: 20rpx;
+  background: #eee;
+  border-radius: 10rpx;
+  overflow: hidden;
+}
+
+.mineral-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary-color) 0%, var(--primary-light) 100%);
+  border-radius: 10rpx;
+  transition: width 1s ease;
+}
+
+.mineral-value {
+  width: 80rpx;
+  font-size: 22rpx;
+  color: var(--text-secondary);
+  text-align: right;
+}
+
+/* 电解实验样式 */
+.electrolysis-setup {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 30rpx;
+}
+
+.water-sample {
+  text-align: center;
+  flex: 1;
+}
+
+.sample-label {
+  display: block;
+  font-size: 24rpx;
+  color: var(--text-secondary);
+  margin-bottom: 15rpx;
+}
+
+.water-sample .water-container {
+  width: 200rpx;
+  height: 150rpx;
+}
+
+.water-surface.clean {
+  color: #e3f2fd;
+}
+
+.water-surface.polluted {
+  color: #8d6e63;
+}
+
+.water-surface.dirty {
+  color: #424242;
+}
+
+.electrode {
+  position: absolute;
+  top: 10rpx;
+  width: 20rpx;
+  height: 100rpx;
+  background: #666;
+  border-radius: 10rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16rpx;
+  color: #ffd700;
+}
+
+.electrode.left {
+  left: 20rpx;
+}
+
+.electrode.right {
+  right: 20rpx;
+}
+
+.sample-description {
+  font-size: 20rpx;
+  color: var(--text-secondary);
+  margin-top: 10rpx;
+  display: block;
+}
+
+.comparison-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 20rpx;
+}
+
+.arrow-text {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.electrolysis-btn {
+  background: linear-gradient(135deg, #f44336 0%, #e57373 100%);
+  color: white;
+  border: none;
+  border-radius: 25rpx;
+  padding: 20rpx 40rpx;
+  font-size: 28rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10rpx;
+  margin: 0 auto;
+  transition: all 0.3s ease;
+}
+
+.electrolysis-btn:active {
+  transform: scale(0.95);
+}
+
+.btn-icon {
+  font-size: 32rpx;
+}
+
+.btn-text {
+  font-weight: 600;
+}
+
+.electrolysis-result {
+  text-align: center;
+  margin-top: 30rpx;
+  background: var(--bg-light);
+  border-radius: 15rpx;
+  padding: 25rpx;
+}
+
+.result-title {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 15rpx;
+}
+
+/* =============  知识卡片  ============= */
+.knowledge-card {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 15rpx;
+  padding: 25rpx;
+  border-left: 6rpx solid var(--primary-color);
+}
+
+.knowledge-title {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 15rpx;
+}
+
+.knowledge-text {
+  display: block;
+  font-size: 24rpx;
+  color: var(--text-secondary);
+  margin-bottom: 8rpx;
+  line-height: 1.5;
+}
+
+/* =============  综合报告  ============= */
+.comprehensive-report {
+  background: white;
+  border-radius: 20rpx;
+  padding: 30rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 10rpx 30rpx rgba(0, 0, 0, 0.1);
+}
+
+.report-header {
+  text-align: center;
+  margin-bottom: 30rpx;
+  padding-bottom: 20rpx;
+  border-bottom: 2rpx solid var(--border-color);
+}
+
+.report-title {
+  display: block;
+  font-size: 36rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8rpx;
+}
+
+.report-date {
+  font-size: 24rpx;
+  color: var(--text-secondary);
+}
+
+.overall-score {
+  text-align: center;
+  background: var(--bg-light);
+  border-radius: 15rpx;
+  padding: 30rpx;
+  margin-bottom: 30rpx;
+}
+
+.score-label {
+  display: block;
+  font-size: 24rpx;
+  color: var(--text-secondary);
+  margin-bottom: 10rpx;
+}
+
+.score-value {
+  display: block;
+  font-size: 72rpx;
+  font-weight: 700;
+  margin-bottom: 10rpx;
+}
+
+.score-value.excellent {
+  color: var(--success-color);
+}
+
+.score-value.good {
+  color: #8bc34a;
+}
+
+.score-value.average {
+  color: var(--warning-color);
+}
+
+.score-value.poor {
+  color: var(--error-color);
+}
+
+.score-grade {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.recommendations {
+  margin-bottom: 30rpx;
+}
+
+.rec-title {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 15rpx;
+}
+
+.rec-item {
+  display: block;
+  font-size: 24rpx;
+  color: var(--text-secondary);
+  margin-bottom: 8rpx;
+  line-height: 1.5;
+}
+
+.product-suggestion {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+  border-radius: 15rpx;
+  padding: 25rpx;
+  color: white;
+  margin-bottom: 20rpx;
+}
+
+.suggestion-title {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 600;
+  margin-bottom: 15rpx;
+}
+
+.product-card {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10rpx;
+  padding: 20rpx;
+}
+
+.product-name {
+  display: block;
+  font-size: 30rpx;
+  font-weight: 600;
+  margin-bottom: 10rpx;
+}
+
+.product-features {
+  display: block;
+  font-size: 24rpx;
+  margin-bottom: 10rpx;
+  opacity: 0.9;
+}
+
+.product-price {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #ffd700;
+}
+
+.report-actions {
+  display: flex;
+  gap: 20rpx;
+}
+
+.report-actions .btn {
+  flex: 1;
+}
+
+/* =============  开始检测提示  ============= */
+.start-tip {
+  text-align: center;
+  padding: 60rpx 30rpx;
+  color: var(--text-secondary);
+}
+
+.tip-icon {
+  display: block;
+  font-size: 60rpx;
+  margin-bottom: 20rpx;
+  animation: bounce 2s ease-in-out infinite;
+}
+
+.tip-text {
+  font-size: 28rpx;
+}
+
+/* =============  动画效果  ============= */
+@keyframes waterFlow {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    transform: scale(1.1) rotate(5deg);
+  }
+}
+
+@keyframes penTest {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(30rpx);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes dropFall {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(40rpx);
+    opacity: 0;
+  }
+}
+
+@keyframes bubbleFloat {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translateY(-20rpx) scale(1.2);
+    opacity: 1;
+  }
+}
+
+@keyframes paperDip {
+  0% {
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) translateY(20rpx);
+  }
+  100% {
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes mineralFloat {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.8;
+  }
+  33% {
+    transform: translateY(-10rpx) rotate(120deg);
+    opacity: 1;
+  }
+  66% {
+    transform: translateY(5rpx) rotate(240deg);
+    opacity: 0.9;
+  }
+}
+
+/* =============  响应式适配  ============= */
+@media (max-width: 400px) {
+  .test-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .electrolysis-setup {
+    flex-direction: column;
+    gap: 20rpx;
+  }
+  
+  .comparison-arrow {
+    transform: rotate(90deg);
+    margin: 10rpx 0;
+  }
+  
+  .water-sample .water-container {
+    width: 250rpx;
+  }
+}

@@ -1,0 +1,267 @@
+<!--game.wxml-->
+<view class="game-container">
+  <!-- 游戏顶部状态栏 -->
+  <view class="game-header">
+    <view class="header-left">
+      <button class="back-btn" bindtap="goBack">←</button>
+      <text class="level-text">第{{currentLevel}}关</text>
+    </view>
+    
+    <view class="header-center">
+      <view class="time-container">
+        <text class="time-label">时间</text>
+        <text class="time-display {{timeLeft <= 30 ? 'time-warning' : ''}}">{{formatTime(timeLeft)}}</text>
+      </view>
+    </view>
+    
+    <view class="header-right">
+      <view class="score-container">
+        <text class="score-label">得分</text>
+        <text class="score-display">{{score}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 智能手机控制区域 -->
+  <view class="smart-control" bindtap="showSmartPanel">
+    <image class="phone-icon" src="/assets/images/phone.png"></image>
+    <text class="control-text">5G远程控制</text>
+    <view class="status-indicator {{waterQuality}}"></view>
+  </view>
+
+  <!-- 游戏主体区域 -->
+  <view class="game-main">
+    <!-- 家庭入水口警示区域 -->
+    <view class="home-inlet">
+      <image class="home-icon" src="/assets/images/home.png"></image>
+      <text class="inlet-text">家庭入水口</text>
+      <text class="warning-text">⚠️ 污染物不能到达这里</text>
+    </view>
+
+    <!-- 游戏方块区域 -->
+    <view class="game-area">
+      <view class="game-grid">
+        <view 
+          class="game-block {{block.type}} {{block.selected ? 'selected' : ''}} {{block.falling ? 'falling' : ''}}"
+          wx:for="{{gameBlocks}}" 
+          wx:key="id"
+          wx:for-item="block"
+          data-id="{{block.id}}"
+          bindtap="onBlockTap"
+          style="transform: translate({{block.col * 40}}rpx, {{block.row * 40}}rpx)">
+          
+          <!-- 颗粒污染物 -->
+          <view wx:if="{{block.type === 'particle'}}" class="particle-block">
+            <image class="block-icon" src="/assets/images/particle.png"></image>
+          </view>
+          
+          <!-- 微生物污染物 -->
+          <view wx:elif="{{block.type === 'microbe'}}" class="microbe-block">
+            <image class="block-icon" src="/assets/images/microbe.png"></image>
+          </view>
+          
+          <!-- 化学污染物 -->
+          <view wx:elif="{{block.type === 'chemical'}}" class="chemical-block">
+            <image class="block-icon" src="/assets/images/chemical.png"></image>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 侧边信息区域 -->
+    <view class="side-info">
+      <!-- 污染源显示 -->
+      <view class="pollution-source">
+        <text class="source-title">污染来源</text>
+        <view class="source-item">
+          <text class="source-text">老化管道</text>
+        </view>
+        <view class="source-item">
+          <text class="source-text">二次供水</text>
+        </view>
+      </view>
+
+      <!-- 净水器展示 -->
+      <view class="purifier-display">
+        <image class="purifier-image" src="/assets/images/purifier.png"></image>
+        <text class="purifier-brand">点点够净水器</text>
+        <view class="chip-indicator {{chipActive ? 'active' : ''}}">
+          <text class="chip-text">5G芯片</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部道具栏 -->
+  <view class="powerup-bar">
+    <view class="powerup-item" 
+          bindtap="usePowerUp" 
+          data-type="pp_cotton">
+      <image class="powerup-icon" src="/assets/images/pp_cotton.png"></image>
+      <text class="powerup-name">PP棉</text>
+      <text class="powerup-count">{{powerups.pp_cotton || 0}}</text>
+    </view>
+    
+    <view class="powerup-item" 
+          bindtap="usePowerUp" 
+          data-type="cto_laser">
+      <image class="powerup-icon" src="/assets/images/cto_laser.png"></image>
+      <text class="powerup-name">CTO</text>
+      <text class="powerup-count">{{powerups.cto_laser || 0}}</text>
+    </view>
+    
+    <view class="powerup-item" 
+          bindtap="usePowerUp" 
+          data-type="ro_wave">
+      <image class="powerup-icon" src="/assets/images/ro_wave.png"></image>
+      <text class="powerup-name">RO</text>
+      <text class="powerup-count">{{powerups.ro_wave || 0}}</text>
+    </view>
+    
+    <view class="powerup-item" bindtap="pauseGame">
+      <image class="powerup-icon" src="/assets/images/pause.png"></image>
+      <text class="powerup-name">暂停</text>
+    </view>
+  </view>
+
+  <!-- 游戏失败弹窗 -->
+  <view class="modal-overlay" wx:if="{{showGameOverModal}}" bindtap="hideGameOverModal">
+    <view class="modal-content game-over-modal" catchtap="preventClose">
+      <view class="modal-header">
+        <text class="modal-title">污染物进入家庭！</text>
+      </view>
+      
+      <view class="modal-body">
+        <image class="fail-icon" src="/assets/images/pollution_warning.png"></image>
+        <text class="fail-message">{{gameOverReason}}</text>
+        
+        <view wx:if="{{canRevive}}" class="revive-options">
+          <text class="revive-title">选择复活方式 (剩余{{maxRevive - reviveUsed}}/{{maxRevive}}次)</text>
+          
+          <button class="revive-btn ad-revive" bindtap="reviveByAd">
+            <image class="revive-icon" src="/assets/images/video_ad.png"></image>
+            <text class="revive-text">看广告复活</text>
+            <text class="revive-desc">观看30秒广告</text>
+          </button>
+          
+          <button class="revive-btn share-revive" bindtap="reviveByShare">
+            <image class="revive-icon" src="/assets/images/wechat_share.png"></image>
+            <text class="revive-text">分享复活</text>
+            <text class="revive-desc">分享给好友或群</text>
+          </button>
+        </view>
+      </view>
+      
+      <view class="modal-footer">
+        <button wx:if="{{!canRevive}}" class="btn-primary restart-btn" bindtap="restartGame">重新开始</button>
+        <button class="btn-secondary give-up-btn" bindtap="giveUpGame">放弃游戏</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 通关成功弹窗 -->
+  <view class="modal-overlay" wx:if="{{showWinModal}}" bindtap="hideWinModal">
+    <view class="modal-content win-modal" catchtap="preventClose">
+      <view class="modal-header">
+        <text class="modal-title">净化成功！</text>
+      </view>
+      
+      <view class="modal-body">
+        <image class="success-icon" src="/assets/images/success.png"></image>
+        <text class="success-message">管道污染已清理干净</text>
+        
+        <view class="win-stats">
+          <view class="stat-item">
+            <text class="stat-label">得分</text>
+            <text class="stat-value">{{score}}</text>
+          </view>
+          <view class="stat-item">
+            <text class="stat-label">时间</text>
+            <text class="stat-value">{{formatTime(timeUsed)}}</text>
+          </view>
+          <view class="stat-item">
+            <text class="stat-label">奖励金币</text>
+            <text class="stat-value">+{{rewardCoins}}</text>
+          </view>
+        </view>
+      </view>
+      
+      <view class="modal-footer">
+        <button class="btn-primary water-test-btn" bindtap="startWaterTest">
+          水质检测
+        </button>
+        <button class="btn-secondary next-level-btn" bindtap="nextLevel">
+          下一关
+        </button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 暂停菜单 -->
+  <view class="modal-overlay" wx:if="{{showPauseModal}}" bindtap="hidePauseModal">
+    <view class="modal-content pause-modal" catchtap="preventClose">
+      <view class="modal-header">
+        <text class="modal-title">游戏暂停</text>
+      </view>
+      
+      <view class="modal-body">
+        <button class="menu-btn" bindtap="resumeGame">继续游戏</button>
+        <button class="menu-btn" bindtap="restartGame">重新开始</button>
+        <button class="menu-btn" bindtap="goToHome">返回主页</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 5G智能控制面板 -->
+  <view class="modal-overlay" wx:if="{{showSmartModal}}" bindtap="hideSmartModal">
+    <view class="modal-content smart-modal" catchtap="preventClose">
+      <view class="modal-header">
+        <text class="modal-title">点点够APP - 5G远程控制</text>
+        <text class="modal-close" bindtap="hideSmartModal">✕</text>
+      </view>
+      
+      <view class="modal-body">
+        <view class="water-status">
+          <text class="status-title">当前水质状态</text>
+          <view class="status-display {{waterQuality}}">
+            <text class="status-text">{{waterQualityText}}</text>
+          </view>
+        </view>
+        
+        <view class="filter-status">
+          <text class="filter-title">滤芯余量</text>
+          <view class="filter-item">
+            <text class="filter-name">PP棉</text>
+            <view class="filter-bar">
+              <view class="filter-progress" style="width: {{filterLife.pp}}%"></view>
+            </view>
+            <text class="filter-percent">{{filterLife.pp}}%</text>
+          </view>
+          <view class="filter-item">
+            <text class="filter-name">CTO</text>
+            <view class="filter-bar">
+              <view class="filter-progress" style="width: {{filterLife.cto}}%"></view>
+            </view>
+            <text class="filter-percent">{{filterLife.cto}}%</text>
+          </view>
+          <view class="filter-item">
+            <text class="filter-name">RO膜</text>
+            <view class="filter-bar">
+              <view class="filter-progress" style="width: {{filterLife.ro}}%"></view>
+            </view>
+            <text class="filter-percent">{{filterLife.ro}}%</text>
+          </view>
+        </view>
+        
+        <view class="smart-controls">
+          <button class="control-btn {{strongFlushCooldown > 0 ? 'disabled' : ''}}" 
+                  bindtap="triggerStrongFlush">
+            <text class="control-text">强冲模式</text>
+            <text class="control-desc" wx:if="{{strongFlushCooldown > 0}}">冷却中 {{strongFlushCooldown}}s</text>
+            <text class="control-desc" wx:else>清除部分污染物</text>
+          </button>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

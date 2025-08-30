@@ -1,0 +1,375 @@
+<!--waterTest.wxml-->
+<view class="water-test-container">
+  <!-- 顶部标题栏 -->
+  <view class="test-header">
+    <button class="back-btn" bindtap="goBack">←</button>
+    <text class="page-title">水质检测实验室</text>
+    <view class="brand-logo">
+      <text class="brand-text">点点够</text>
+    </view>
+  </view>
+
+  <!-- 检测说明 -->
+  <view class="test-intro">
+    <text class="intro-title">🔬 净化前后对比检测</text>
+    <text class="intro-desc">通过简单有趣的检测实验，了解净水器的过滤效果</text>
+  </view>
+
+  <!-- 检测项目选择 -->
+  <view class="test-selection">
+    <text class="selection-title">选择检测项目</text>
+    <scroll-view class="test-tabs" scroll-x="true">
+      <view class="test-tab {{currentTest === 'tds' ? 'active' : ''}}" 
+            bindtap="selectTest" data-test="tds">
+        <image class="tab-icon" src="/assets/images/tds_icon.png"></image>
+        <text class="tab-text">TDS检测</text>
+      </view>
+      
+      <view class="test-tab {{currentTest === 'chlorine' ? 'active' : ''}}" 
+            bindtap="selectTest" data-test="chlorine">
+        <image class="tab-icon" src="/assets/images/chlorine_icon.png"></image>
+        <text class="tab-text">余氯检测</text>
+      </view>
+      
+      <view class="test-tab {{currentTest === 'ph' ? 'active' : ''}}" 
+            bindtap="selectTest" data-test="ph">
+        <image class="tab-icon" src="/assets/images/ph_icon.png"></image>
+        <text class="tab-text">PH检测</text>
+      </view>
+      
+      <view class="test-tab {{currentTest === 'mineral' ? 'active' : ''}}" 
+            bindtap="selectTest" data-test="mineral">
+        <image class="tab-icon" src="/assets/images/mineral_icon.png"></image>
+        <text class="tab-text">矿物质</text>
+      </view>
+      
+      <view class="test-tab {{currentTest === 'electrolysis' ? 'active' : ''}}" 
+            bindtap="selectTest" data-test="electrolysis">
+        <image class="tab-icon" src="/assets/images/electrolysis_icon.png"></image>
+        <text class="tab-text">电解实验</text>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- TDS检测游戏 -->
+  <view class="test-game tds-test" wx:if="{{currentTest === 'tds'}}">
+    <view class="test-title">
+      <text class="title-text">TDS (总溶解固体) 检测</text>
+      <text class="title-desc">数值越低表示水质越纯净</text>
+    </view>
+    
+    <view class="test-area">
+      <view class="water-samples">
+        <!-- 净化前的水样 -->
+        <view class="water-sample before">
+          <text class="sample-label">净化前</text>
+          <view class="water-cup before-water">
+            <view class="water-level" style="background: {{beforeWater.color}}">
+              <view class="tds-particles" wx:if="{{showTdsParticles.before}}">
+                <view class="particle" wx:for="{{tdsParticles.before}}" wx:key="*this"></view>
+              </view>
+            </view>
+          </view>
+          <text class="tds-value">{{beforeWater.tds}} ppm</text>
+        </view>
+
+        <!-- TDS检测笔 -->
+        <view class="tds-pen {{tdsTestState}}" bindtap="startTdsTest">
+          <image class="pen-image" src="/assets/images/tds_pen.png"></image>
+          <text class="pen-label">点击使用TDS笔</text>
+          <view class="pen-screen" wx:if="{{tdsTestState === 'testing'}}">
+            <text class="screen-value">{{displayTdsValue}}</text>
+          </view>
+        </view>
+
+        <!-- 净化后的水样 -->
+        <view class="water-sample after">
+          <text class="sample-label">净化后</text>
+          <view class="water-cup after-water">
+            <view class="water-level" style="background: {{afterWater.color}}">
+              <view class="tds-particles" wx:if="{{showTdsParticles.after}}">
+                <view class="particle" wx:for="{{tdsParticles.after}}" wx:key="*this"></view>
+              </view>
+            </view>
+          </view>
+          <text class="tds-value">{{afterWater.tds}} ppm</text>
+        </view>
+      </view>
+
+      <!-- 检测结果 -->
+      <view class="test-result" wx:if="{{tdsTestCompleted}}">
+        <view class="result-comparison">
+          <text class="result-title">检测结果对比</text>
+          <view class="result-bar">
+            <view class="before-bar" style="width: {{beforeWater.tds / 5}}%">
+              <text class="bar-label">净化前: {{beforeWater.tds}}ppm</text>
+            </view>
+            <view class="after-bar" style="width: {{afterWater.tds / 5}}%">
+              <text class="bar-label">净化后: {{afterWater.tds}}ppm</text>
+            </view>
+          </view>
+          <text class="result-conclusion">净化效果：减少{{((beforeWater.tds - afterWater.tds) / beforeWater.tds * 100).toFixed(1)}}%</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 余氯检测游戏 -->
+  <view class="test-game chlorine-test" wx:if="{{currentTest === 'chlorine'}}">
+    <view class="test-title">
+      <text class="title-text">余氯检测</text>
+      <text class="title-desc">余氯过多会影响口感，过少无法杀菌</text>
+    </view>
+
+    <view class="test-area">
+      <view class="chlorine-test-kit">
+        <view class="test-tube-container">
+          <view class="test-tube before">
+            <text class="tube-label">净化前</text>
+            <view class="water-in-tube" style="background: {{chlorineWater.before.color}}">
+              <view class="chlorine-bubbles" wx:if="{{showChlorineBubbles.before}}">
+                <view class="bubble" wx:for="{{chlorineBubbles.before}}" wx:key="*this" 
+                      style="animation-delay: {{item}}s"></view>
+              </view>
+            </view>
+          </view>
+
+          <view class="reagent-dropper {{chlorineTestState}}" bindtap="addChlorineReagent">
+            <image class="dropper-image" src="/assets/images/reagent_bottle.png"></image>
+            <text class="dropper-label">点击滴入试剂</text>
+            <view class="drop-animation" wx:if="{{chlorineTestState === 'dropping'}}"></view>
+          </view>
+
+          <view class="test-tube after">
+            <text class="tube-label">净化后</text>
+            <view class="water-in-tube" style="background: {{chlorineWater.after.color}}">
+              <view class="chlorine-bubbles" wx:if="{{showChlorineBubbles.after}}">
+                <view class="bubble" wx:for="{{chlorineBubbles.after}}" wx:key="*this" 
+                      style="animation-delay: {{item}}s"></view>
+              </view>
+            </view>
+          </view>
+        </view>
+
+        <view class="chlorine-result" wx:if="{{chlorineTestCompleted}}">
+          <text class="result-title">余氯检测结果</text>
+          <view class="chlorine-levels">
+            <view class="level-item">
+              <text class="level-label">净化前</text>
+              <text class="level-value high">{{chlorineWater.before.level}}mg/L</text>
+              <text class="level-status">偏高</text>
+            </view>
+            <view class="level-item">
+              <text class="level-label">净化后</text>
+              <text class="level-value low">{{chlorineWater.after.level}}mg/L</text>
+              <text class="level-status">理想</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- PH检测游戏 -->
+  <view class="test-game ph-test" wx:if="{{currentTest === 'ph'}}">
+    <view class="test-title">
+      <text class="title-text">PH值检测</text>
+      <text class="title-desc">理想饮用水PH值应在6.5-8.5之间</text>
+    </view>
+
+    <view class="test-area">
+      <view class="ph-test-kit">
+        <view class="ph-strips-container">
+          <view class="water-sample-ph before">
+            <text class="sample-label">净化前</text>
+            <view class="ph-strip {{phTestState.before}}" bindtap="testPh" data-sample="before">
+              <image class="strip-image" src="/assets/images/ph_strip.png"></image>
+              <view class="strip-color" style="background: {{phResults.before.color}}"></view>
+            </view>
+            <text class="ph-value">PH: {{phResults.before.value}}</text>
+          </view>
+
+          <view class="ph-color-chart">
+            <text class="chart-title">PH色卡对照</text>
+            <view class="color-scale">
+              <view class="color-item" wx:for="{{phColorChart}}" wx:key="value" 
+                    style="background: {{item.color}}">
+                <text class="color-value">{{item.value}}</text>
+              </view>
+            </view>
+          </view>
+
+          <view class="water-sample-ph after">
+            <text class="sample-label">净化后</text>
+            <view class="ph-strip {{phTestState.after}}" bindtap="testPh" data-sample="after">
+              <image class="strip-image" src="/assets/images/ph_strip.png"></image>
+              <view class="strip-color" style="background: {{phResults.after.color}}"></view>
+            </view>
+            <text class="ph-value">PH: {{phResults.after.value}}</text>
+          </view>
+        </view>
+
+        <view class="ph-result" wx:if="{{phTestCompleted}}">
+          <text class="result-title">PH检测结果</text>
+          <view class="ph-analysis">
+            <text class="analysis-text">净化前：{{phResults.before.description}}</text>
+            <text class="analysis-text">净化后：{{phResults.after.description}}</text>
+            <text class="analysis-conclusion">点点够净水器有效调节水质PH值至理想范围</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 矿物质检测游戏 -->
+  <view class="test-game mineral-test" wx:if="{{currentTest === 'mineral'}}">
+    <view class="test-title">
+      <text class="title-text">矿物质含量检测</text>
+      <text class="title-desc">适量矿物质有益健康，过量会形成水垢</text>
+    </view>
+
+    <view class="test-area">
+      <view class="mineral-detection">
+        <view class="water-containers">
+          <view class="mineral-container before">
+            <text class="container-label">净化前</text>
+            <view class="mineral-water">
+              <view class="mineral-particles" bindtap="collectMinerals" data-type="before">
+                <view class="mineral-particle {{item.type}}" 
+                      wx:for="{{mineralParticles.before}}" 
+                      wx:key="id"
+                      style="left: {{item.x}}%; top: {{item.y}}%; animation-delay: {{item.delay}}s"
+                      data-id="{{item.id}}">
+                </view>
+              </view>
+            </view>
+            <text class="mineral-count">检测到: {{mineralCounts.before}}种矿物质</text>
+          </view>
+
+          <view class="mineral-detector {{mineralTestState}}" bindtap="startMineralDetection">
+            <image class="detector-image" src="/assets/images/mineral_detector.png"></image>
+            <text class="detector-label">点击开始检测</text>
+            <view class="detection-wave" wx:if="{{mineralTestState === 'detecting'}}"></view>
+          </view>
+
+          <view class="mineral-container after">
+            <text class="container-label">净化后</text>
+            <view class="mineral-water">
+              <view class="mineral-particles" bindtap="collectMinerals" data-type="after">
+                <view class="mineral-particle {{item.type}}" 
+                      wx:for="{{mineralParticles.after}}" 
+                      wx:key="id"
+                      style="left: {{item.x}}%; top: {{item.y}}%; animation-delay: {{item.delay}}s"
+                      data-id="{{item.id}}">
+                </view>
+              </view>
+            </view>
+            <text class="mineral-count">检测到: {{mineralCounts.after}}种矿物质</text>
+          </view>
+        </view>
+
+        <view class="mineral-result" wx:if="{{mineralTestCompleted}}">
+          <text class="result-title">矿物质分析结果</text>
+          <view class="mineral-chart">
+            <view class="mineral-type">
+              <text class="type-name">钙离子</text>
+              <view class="type-bar">
+                <view class="before-amount" style="width: {{mineralData.calcium.before}}%"></view>
+                <view class="after-amount" style="width: {{mineralData.calcium.after}}%"></view>
+              </view>
+            </view>
+            <view class="mineral-type">
+              <text class="type-name">镁离子</text>
+              <view class="type-bar">
+                <view class="before-amount" style="width: {{mineralData.magnesium.before}}%"></view>
+                <view class="after-amount" style="width: {{mineralData.magnesium.after}}%"></view>
+              </view>
+            </view>
+          </view>
+          <text class="mineral-conclusion">RO技术保留有益矿物质，去除有害重金属</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 电解实验游戏 -->
+  <view class="test-game electrolysis-test" wx:if="{{currentTest === 'electrolysis'}}">
+    <view class="test-title">
+      <text class="title-text">电解对比实验</text>
+      <text class="title-desc">通过电解观察水质差异，颜色越深污染越严重</text>
+    </view>
+
+    <view class="test-area">
+      <view class="electrolysis-setup">
+        <view class="electrolysis-container before">
+          <text class="container-label">净化前</text>
+          <view class="electrolysis-cup">
+            <view class="water-for-electrolysis" style="background: {{electrolysisResults.before.color}}">
+              <view class="electrode left"></view>
+              <view class="electrode right"></view>
+              <view class="electric-current" wx:if="{{electrolysisState === 'running'}}">
+                <view class="current-line" wx:for="{{electricCurrents.before}}" wx:key="*this"></view>
+              </view>
+            </view>
+          </view>
+          <text class="electrolysis-result">结果: {{electrolysisResults.before.description}}</text>
+        </view>
+
+        <view class="electrolysis-control">
+          <button class="start-electrolysis-btn {{electrolysisState}}" bindtap="startElectrolysis">
+            <image class="control-icon" src="/assets/images/power_button.png"></image>
+            <text class="control-text">{{electrolysisState === 'ready' ? '开始电解' : '电解中...'}}</text>
+          </button>
+          <view class="timer-display" wx:if="{{electrolysisState === 'running'}}">
+            <text class="timer-text">{{electrolysisTimer}}s</text>
+          </view>
+        </view>
+
+        <view class="electrolysis-container after">
+          <text class="container-label">净化后</text>
+          <view class="electrolysis-cup">
+            <view class="water-for-electrolysis" style="background: {{electrolysisResults.after.color}}">
+              <view class="electrode left"></view>
+              <view class="electrode right"></view>
+              <view class="electric-current" wx:if="{{electrolysisState === 'running'}}">
+                <view class="current-line" wx:for="{{electricCurrents.after}}" wx:key="*this"></view>
+              </view>
+            </view>
+          </view>
+          <text class="electrolysis-result">结果: {{electrolysisResults.after.description}}</text>
+        </view>
+      </view>
+
+      <view class="electrolysis-explanation" wx:if="{{electrolysisCompleted}}">
+        <text class="explanation-title">实验原理说明</text>
+        <text class="explanation-text">电解实验通过电流分解水中的离子化合物，水质越差产生的有害物质越多，颜色变化越明显。</text>
+        <text class="explanation-conclusion">点点够RO净水器有效去除水中杂质，电解后几乎无颜色变化。</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 检测完成奖励 -->
+  <view class="test-rewards" wx:if="{{showRewards}}">
+    <view class="rewards-content">
+      <text class="rewards-title">🎉 检测完成奖励</text>
+      <view class="reward-items">
+        <view class="reward-item">
+          <image class="reward-icon" src="/assets/images/coin.png"></image>
+          <text class="reward-text">+{{testRewards.coins}} 金币</text>
+        </view>
+        <view class="reward-item">
+          <image class="reward-icon" src="/assets/images/knowledge.png"></image>
+          <text class="reward-text">+1 知识点</text>
+        </view>
+      </view>
+      <button class="claim-rewards-btn btn-primary" bindtap="claimRewards">领取奖励</button>
+    </view>
+  </view>
+
+  <!-- 知识小贴士 -->
+  <view class="knowledge-tips">
+    <text class="tips-title">💡 你知道吗？</text>
+    <text class="tip-content">{{currentKnowledgeTip}}</text>
+  </view>
+</view>
+<!-- pages/waterTest/waterTest.wxml -->\n<view class=\"container water-test-page\">\n  <!-- 页面标题 -->\n  <view class=\"page-header\">\n    <view class=\"header-content\">\n      <text class=\"page-title\">💧 水质检测中心</text>\n      <text class=\"page-subtitle\">学习净水知识，了解家庭用水安全</text>\n    </view>\n    \n    <!-- 返回按钮 -->\n    <view class=\"back-btn\" bindtap=\"onBack\">\n      <text class=\"back-icon\">←</text>\n    </view>\n  </view>\n\n  <!-- 检测项目网格 -->\n  <view class=\"test-grid\">\n    <!-- TDS检测 -->\n    <view \n      class=\"test-item {{currentTest === 'tds' ? 'active' : ''}}\"\n      data-type=\"tds\"\n      bindtap=\"onSelectTest\"\n    >\n      <view class=\"test-device-icon tds\">\n        <text class=\"device-symbol\">📏</text>\n      </view>\n      <view class=\"test-info\">\n        <text class=\"test-name\">TDS检测</text>\n        <text class=\"test-desc\">总溶解固体</text>\n      </view>\n      <view class=\"test-status\">\n        <text class=\"status-text {{tdsResult.level}}\">{{tdsResult.text}}</text>\n      </view>\n    </view>\n    \n    <!-- 余氯检测 -->\n    <view \n      class=\"test-item {{currentTest === 'chlorine' ? 'active' : ''}}\"\n      data-type=\"chlorine\"\n      bindtap=\"onSelectTest\"\n    >\n      <view class=\"test-device-icon chlorine\">\n        <text class=\"device-symbol\">🧪</text>\n      </view>\n      <view class=\"test-info\">\n        <text class=\"test-name\">余氯检测</text>\n        <text class=\"test-desc\">消毒剂残留</text>\n      </view>\n      <view class=\"test-status\">\n        <text class=\"status-text {{chlorineResult.level}}\">{{chlorineResult.text}}</text>\n      </view>\n    </view>\n    \n    <!-- pH检测 -->\n    <view \n      class=\"test-item {{currentTest === 'ph' ? 'active' : ''}}\"\n      data-type=\"ph\"\n      bindtap=\"onSelectTest\"\n    >\n      <view class=\"test-device-icon ph\">\n        <text class=\"device-symbol\">📊</text>\n      </view>\n      <view class=\"test-info\">\n        <text class=\"test-name\">pH检测</text>\n        <text class=\"test-desc\">酸碱度测试</text>\n      </view>\n      <view class=\"test-status\">\n        <text class=\"status-text {{phResult.level}}\">{{phResult.text}}</text>\n      </view>\n    </view>\n    \n    <!-- 矿物质检测 -->\n    <view \n      class=\"test-item {{currentTest === 'mineral' ? 'active' : ''}}\"\n      data-type=\"mineral\"\n      bindtap=\"onSelectTest\"\n    >\n      <view class=\"test-device-icon mineral\">\n        <text class=\"device-symbol\">💎</text>\n      </view>\n      <view class=\"test-info\">\n        <text class=\"test-name\">矿物质</text>\n        <text class=\"test-desc\">有益元素</text>\n      </view>\n      <view class=\"test-status\">\n        <text class=\"status-text {{mineralResult.level}}\">{{mineralResult.text}}</text>\n      </view>\n    </view>\n    \n    <!-- 电解实验 -->\n    <view \n      class=\"test-item {{currentTest === 'electrolysis' ? 'active' : ''}}\"\n      data-type=\"electrolysis\"\n      bindtap=\"onSelectTest\"\n    >\n      <view class=\"test-device-icon electrolysis\">\n        <text class=\"device-symbol\">⚡</text>\n      </view>\n      <view class=\"test-info\">\n        <text class=\"test-name\">电解实验</text>\n        <text class=\"test-desc\">水质对比</text>\n      </view>\n      <view class=\"test-status\">\n        <text class=\"status-text {{electrolysisResult.level}}\">{{electrolysisResult.text}}</text>\n      </view>\n    </view>\n  </view>\n\n  <!-- 检测操作区域 -->\n  <view class=\"test-operation-area\" wx:if=\"{{currentTest}}\">\n    <!-- TDS检测界面 -->\n    <view class=\"test-interface tds-test\" wx:if=\"{{currentTest === 'tds'}}\">\n      <view class=\"test-title\">\n        <text class=\"title-text\">TDS总溶解固体检测</text>\n        <text class=\"title-subtitle\">使用TDS笔测量水中溶解物质含量</text>\n      </view>\n      \n      <view class=\"test-area\">\n        <view class=\"water-container\">\n          <view class=\"water-surface\">💧</view>\n          <view class=\"tds-pen {{tdsTestState === 'testing' ? 'testing' : ''}}\" bindtap=\"onStartTdsTest\">\n            <text class=\"pen-tip\">📏</text>\n          </view>\n        </view>\n        \n        <view class=\"test-result-display\">\n          <text class=\"result-label\">检测结果</text>\n          <text class=\"result-value {{tdsResult.level}}\">{{tdsResult.value}} ppm</text>\n          <text class=\"result-description\">{{tdsResult.description}}</text>\n        </view>\n      </view>\n      \n      <view class=\"knowledge-card\">\n        <text class=\"knowledge-title\">💡 TDS知识</text>\n        <text class=\"knowledge-text\">• 0-50ppm：纯净水级别，适合饮用</text>\n        <text class=\"knowledge-text\">• 50-100ppm：优质饮用水</text>\n        <text class=\"knowledge-text\">• 100-300ppm：一般饮用水</text>\n        <text class=\"knowledge-text\">• 300ppm以上：需要净化处理</text>\n      </view>\n    </view>\n    \n    <!-- 余氯检测界面 -->\n    <view class=\"test-interface chlorine-test\" wx:if=\"{{currentTest === 'chlorine'}}\">\n      <view class=\"test-title\">\n        <text class=\"title-text\">余氯检测</text>\n        <text class=\"title-subtitle\">检测自来水中消毒剂残留</text>\n      </view>\n      \n      <view class=\"test-area\">\n        <view class=\"water-container\">\n          <view class=\"water-surface\">💧</view>\n          <view class=\"reagent-bottle\" bindtap=\"onStartChlorineTest\">\n            <text class=\"bottle-icon\">🧪</text>\n            <text class=\"drop-animation\" wx:if=\"{{chlorineTestState === 'testing'}}\">💧</text>\n          </view>\n          \n          <!-- 气泡动画 -->\n          <view class=\"bubbles\" wx:if=\"{{chlorineTestState === 'result'}}\">\n            <view class=\"bubble\" wx:for=\"{{chlorineResult.bubbles}}\" wx:key=\"*this\">○</view>\n          </view>\n        </view>\n        \n        <view class=\"test-result-display\">\n          <text class=\"result-label\">余氯含量</text>\n          <text class=\"result-value {{chlorineResult.level}}\">{{chlorineResult.value}} mg/L</text>\n          <text class=\"result-description\">{{chlorineResult.description}}</text>\n        </view>\n      </view>\n      \n      <view class=\"knowledge-card\">\n        <text class=\"knowledge-title\">💡 余氯知识</text>\n        <text class=\"knowledge-text\">• 适量余氯可杀菌消毒</text>\n        <text class=\"knowledge-text\">• 过量余氯影响口感和健康</text>\n        <text class=\"knowledge-text\">• 活性炭可有效去除余氯</text>\n        <text class=\"knowledge-text\">• 建议余氯含量≤0.3mg/L</text>\n      </view>\n    </view>\n    \n    <!-- pH检测界面 -->\n    <view class=\"test-interface ph-test\" wx:if=\"{{currentTest === 'ph'}}\">\n      <view class=\"test-title\">\n        <text class=\"title-text\">pH酸碱度检测</text>\n        <text class=\"title-subtitle\">测试水质的酸碱性</text>\n      </view>\n      \n      <view class=\"test-area\">\n        <view class=\"water-container\">\n          <view class=\"water-surface {{phResult.colorClass}}\">💧</view>\n          <view class=\"ph-paper {{phTestState === 'testing' ? 'testing' : ''}}\" bindtap=\"onStartPhTest\">\n            <text class=\"paper-icon\">📄</text>\n          </view>\n        </view>\n        \n        <view class=\"ph-scale\">\n          <view class=\"scale-item\" wx:for=\"{{phScale}}\" wx:key=\"value\" data-ph=\"{{item.value}}\">\n            <view class=\"scale-color\" style=\"background-color: {{item.color}};\"></view>\n            <text class=\"scale-label\">{{item.value}}</text>\n          </view>\n        </view>\n        \n        <view class=\"test-result-display\">\n          <text class=\"result-label\">pH值</text>\n          <text class=\"result-value {{phResult.level}}\">{{phResult.value}}</text>\n          <text class=\"result-description\">{{phResult.description}}</text>\n        </view>\n      </view>\n      \n      <view class=\"knowledge-card\">\n        <text class=\"knowledge-title\">💡 pH知识</text>\n        <text class=\"knowledge-text\">• pH<7为酸性，pH>7为碱性</text>\n        <text class=\"knowledge-text\">• 饮用水适宜pH范围：6.5-8.5</text>\n        <text class=\"knowledge-text\">• 弱碱性水有益人体健康</text>\n        <text class=\"knowledge-text\">• RO净水器可调节pH值</text>\n      </view>\n    </view>\n    \n    <!-- 矿物质检测界面 -->\n    <view class=\"test-interface mineral-test\" wx:if=\"{{currentTest === 'mineral'}}\">\n      <view class=\"test-title\">\n        <text class=\"title-text\">矿物质含量检测</text>\n        <text class=\"title-subtitle\">检测水中有益矿物元素</text>\n      </view>\n      \n      <view class=\"test-area\">\n        <view class=\"water-container\">\n          <view class=\"water-surface\">💧</view>\n          \n          <!-- 矿物质颗粒动画 -->\n          <view class=\"mineral-particles\" wx:if=\"{{mineralTestState === 'result'}}\">\n            <view \n              class=\"mineral-particle {{particle.type}}\"\n              wx:for=\"{{mineralResult.particles}}\"\n              wx:key=\"id\"\n              style=\"left: {{particle.x}}%; top: {{particle.y}}%;\"\n            >\n              {{particle.symbol}}\n            </view>\n          </view>\n          \n          <button class=\"mineral-detector\" bindtap=\"onStartMineralTest\">\n            <text class=\"detector-icon\">🔬</text>\n            <text class=\"detector-text\">开始检测</text>\n          </button>\n        </view>\n        \n        <view class=\"mineral-composition\">\n          <text class=\"composition-title\">矿物质组成</text>\n          <view class=\"mineral-list\">\n            <view class=\"mineral-item\" wx:for=\"{{mineralResult.composition}}\" wx:key=\"name\">\n              <text class=\"mineral-name\">{{item.name}}</text>\n              <view class=\"mineral-bar\">\n                <view class=\"mineral-fill\" style=\"width: {{item.percentage}}%;\"></view>\n              </view>\n              <text class=\"mineral-value\">{{item.value}}</text>\n            </view>\n          </view>\n        </view>\n      </view>\n      \n      <view class=\"knowledge-card\">\n        <text class=\"knowledge-title\">💡 矿物质知识</text>\n        <text class=\"knowledge-text\">• 适量矿物质有益健康</text>\n        <text class=\"knowledge-text\">• 钙镁离子影响水质口感</text>\n        <text class=\"knowledge-text\">• 过量重金属有害健康</text>\n        <text class=\"knowledge-text\">• 净水器可选择性过滤</text>\n      </view>\n    </view>\n    \n    <!-- 电解实验界面 -->\n    <view class=\"test-interface electrolysis-test\" wx:if=\"{{currentTest === 'electrolysis'}}\">\n      <view class=\"test-title\">\n        <text class=\"title-text\">水质电解对比实验</text>\n        <text class=\"title-subtitle\">直观展示净化前后水质差异</text>\n      </view>\n      \n      <view class=\"test-area\">\n        <view class=\"electrolysis-setup\">\n          <!-- 净化前水样 -->\n          <view class=\"water-sample before\">\n            <text class=\"sample-label\">净化前</text>\n            <view class=\"water-container\">\n              <view class=\"water-surface {{electrolysisResult.beforeClass}}\">💧</view>\n              <view class=\"electrode left\">⚡</view>\n              <view class=\"electrode right\">⚡</view>\n            </view>\n            <text class=\"sample-description\">{{electrolysisResult.beforeDesc}}</text>\n          </view>\n          \n          <!-- 对比箭头 -->\n          <view class=\"comparison-arrow\">\n            <text class=\"arrow-text\">VS</text>\n          </view>\n          \n          <!-- 净化后水样 -->\n          <view class=\"water-sample after\">\n            <text class=\"sample-label\">净化后</text>\n            <view class=\"water-container\">\n              <view class=\"water-surface {{electrolysisResult.afterClass}}\">💧</view>\n              <view class=\"electrode left\">⚡</view>\n              <view class=\"electrode right\">⚡</view>\n            </view>\n            <text class=\"sample-description\">{{electrolysisResult.afterDesc}}</text>\n          </view>\n        </view>\n        \n        <button class=\"electrolysis-btn\" bindtap=\"onStartElectrolysis\">\n          <text class=\"btn-icon\">⚡</text>\n          <text class=\"btn-text\">开始电解</text>\n        </button>\n        \n        <view class=\"electrolysis-result\" wx:if=\"{{electrolysisTestState === 'result'}}\">\n          <text class=\"result-title\">实验结果</text>\n          <text class=\"result-description\">{{electrolysisResult.conclusion}}</text>\n        </view>\n      </view>\n      \n      <view class=\"knowledge-card\">\n        <text class=\"knowledge-title\">💡 电解原理</text>\n        <text class=\"knowledge-text\">• 电解使水中离子发生反应</text>\n        <text class=\"knowledge-text\">• 水质越差颜色变化越明显</text>\n        <text class=\"knowledge-text\">• 净化水电解后基本无色</text>\n        <text class=\"knowledge-text\">• 直观展示净水器效果</text>\n      </view>\n    </view>\n  </view>\n\n  <!-- 综合报告 -->\n  <view class=\"comprehensive-report\" wx:if=\"{{allTestsCompleted}}\">\n    <view class=\"report-header\">\n      <text class=\"report-title\">📋 水质检测报告</text>\n      <text class=\"report-date\">检测时间：{{reportDate}}</text>\n    </view>\n    \n    <view class=\"report-content\">\n      <view class=\"overall-score\">\n        <text class=\"score-label\">综合评分</text>\n        <text class=\"score-value {{overallGrade.level}}\">{{overallGrade.score}}</text>\n        <text class=\"score-grade\">{{overallGrade.grade}}</text>\n      </view>\n      \n      <view class=\"recommendations\">\n        <text class=\"rec-title\">💡 改善建议</text>\n        <text class=\"rec-item\" wx:for=\"{{recommendations}}\" wx:key=\"*this\">• {{item}}</text>\n      </view>\n      \n      <view class=\"product-suggestion\">\n        <text class=\"suggestion-title\">🌟 推荐解决方案</text>\n        <view class=\"product-card\">\n          <text class=\"product-name\">点点够RO反渗透净水器</text>\n          <text class=\"product-features\">✓ 五级过滤 ✓ RO反渗透技术 ✓ 5G智能监控</text>\n          <text class=\"product-price\">特价 ¥980 使用2年</text>\n        </view>\n      </view>\n    </view>\n    \n    <view class=\"report-actions\">\n      <button class=\"btn btn-outline\" bindtap=\"onSaveReport\">保存报告</button>\n      <button class=\"btn btn-primary\" bindtap=\"onContactService\">咨询购买</button>\n    </view>\n  </view>\n\n  <!-- 开始检测提示 -->\n  <view class=\"start-tip\" wx:if=\"{{!currentTest}}\">\n    <text class=\"tip-icon\">👆</text>\n    <text class=\"tip-text\">选择上方检测项目开始体验</text>\n  </view>\n</view>

@@ -1,0 +1,9 @@
+<!-- SVG占位符: 商城图标(激活状态) -->
+<svg width="81" height="81" viewBox="0 0 81 81" xmlns="http://www.w3.org/2000/svg">
+  <rect width="81" height="81" rx="8" fill="#f0f8ff"/>
+  <rect x="20" y="30" width="41" height="30" rx="3" stroke="#1296db" stroke-width="2" fill="#1296db" opacity="0.1"/>
+  <circle cx="30" cy="66" r="3" fill="#1296db"/>
+  <circle cx="51" cy="66" r="3" fill="#1296db"/>
+  <path d="M20 30 L15 20 L25 20" stroke="#1296db" stroke-width="2" fill="none"/>
+  <text x="40.5" y="75" text-anchor="middle" font-size="8" fill="#1296db">商城</text>
+</svg>

@@ -146,36 +146,46 @@ classDiagram
     MatchEngine --> PollutantBlock
 ```
 
-#### 4.2.3 游戏区域管理器 (GameAreaManager)
+#### 4.2.4 复活与奖励系统 (ReviveRewardSystem)
 ```mermaid
 classDiagram
-    class GameArea {
-        +width: 8
-        +height: 12
-        +grid: Array[]
-        +fallSpeed: number
-        +timeLimit: number
-        +checkGameOver()
-        +spawnPollutants()
-        +processGravity()
+    class ReviveSystem {
+        +reviveCount: number
+        +maxRevivePerGame: 2
+        +checkReviveAvailable()
+        +triggerRevive(method)
+        +showReviveOptions()
     }
     
-    class TimeManager {
-        +remainingTime: number
-        +countDown()
-        +triggerUrgency()
-        +gameOverCheck()
+    class AdSystem {
+        +videoAdUnitId: string
+        +loadRewardedAd()
+        +showRewardedAd()
+        +onAdWatched(callback)
+        +onAdFailed(callback)
     }
     
-    class ScoreSystem {
-        +currentScore: number
-        +combo: number
-        +addScore(matchCount)
-        +calculateBonus()
+    class ShareSystem {
+        +shareTitle: string
+        +shareImage: string
+        +shareToFriend()
+        +shareToGroup()
+        +onShareSuccess(callback)
+        +trackShareData()
     }
     
-    GameArea --> TimeManager
-    GameArea --> ScoreSystem
+    class PowerUpReward {
+        +bombCount: number
+        +maxDailyBombs: 5
+        +addBomb(source)
+        +checkBombLimit()
+        +showRewardOptions()
+    }
+    
+    ReviveSystem --> AdSystem
+    ReviveSystem --> ShareSystem
+    PowerUpReward --> AdSystem
+    PowerUpReward --> ShareSystem
 ```
 
 ### 4.3 数据模型
@@ -198,24 +208,34 @@ UserData = {
 }
 ```
 
-#### 4.3.2 游戏状态数据模型
+#### 4.3.3 复活与道具数据模型
 ```javascript
-GameStateData = {
-    level: number,           // 当前关卡
-    timeRemaining: number,   // 剩余时间(秒)
-    score: number,           // 当前得分
-    combo: number,           // 连击数
-    grid: Array[8][12],      // 8x12的游戏区域
-    pollutantQueue: Array,   // 待处理污染物队列
-    difficulty: {
-        spawnRate: number,    // 污染物生成速度
-        timeLimit: number,    // 时间限制
-        targetScore: number   // 目标得分
+ReviveRewardData = {
+    revive: {
+        usedCount: number,      // 本局已使用复活次数
+        maxPerGame: 2,          // 每局最大复活次数
+        methods: {
+            watchAd: boolean,    // 是否可看广告复活
+            share: boolean       // 是否可分享复活
+        }
     },
     powerUps: {
-        ppCotton: number,     // PP棉道具数量
-        ctoBomb: number,      // CTO炸弹数量
-        roLaser: number       // RO激光数量
+        bombs: {
+            count: number,       // 当前炸弹数量
+            dailyEarned: number, // 今日已获得数量
+            maxDaily: 5,         // 每日最大获得数量
+            lastResetDate: string // 上次重置日期
+        }
+    },
+    adTracking: {
+        totalWatched: number,    // 总观看次数
+        todayWatched: number,    // 今日观看次数
+        lastAdTime: timestamp    // 上次看广告时间
+    },
+    shareTracking: {
+        totalShares: number,     // 总分享次数
+        todayShares: number,     // 今日分享次数
+        shareSuccess: number     // 成功分享次数
     }
 }
 ```
@@ -293,24 +313,40 @@ GameStateData = {
 - 内容简单易懂，如"你知道吗？TDS越低不一定越好哦！"
 - 可以收藏到“知识图鉴”中
 
-### 5.3 5G智能功能体验
+### 5.4 复活系统设计
 
-#### 5.3.1 远程控制模拟
-**游戏内智能手机**
-- 游戏右上角显示一个小手机图标
-- 点击后弹出“点点够APP”界面
-- 可以查看当前水质状态和滤芯余量
+#### 5.4.1 游戏复活机制
+**复活触发条件**
+- 污染物堆积到顶部（家庭入水口）时触发
+- 每局游戏最多可复活2次
+- 复活后清除部分污染物，给予10秒额外时间
 
-**智能提醒系统**
-- 当污染物堆积过多时，手机会震动提醒
-- 玩家可以点击“远程强冲”按钮
-- 强冲后会清除一小部分污染物，但有冷却时间
+**复活方式一：看广告复活**
+- 点击“看广告复活”按钮
+- 播放腾讯流量主的激励视频广告（30-60秒）
+- 广告播放完成后获得复活机会
+- 失败处理：广告加载失败或用户提前关闭时显示其他选项
 
-#### 5.3.2 品牌特色展示
-- **产品外观**: 游戏中的净水器形象基于真实产品
-- **5G芯片展示**: 净水器上有闪烁的芯片指示灯
-- **价格优势**: 游戏内商城展示“980元用2年”的价值
-- **技术科普**: 通过游戏教育用户了解RO技术原理
+**复活方式二：分享复活**
+- 点击“分享复活”按钮
+- 选择分享到微信好友或微信群
+- 分享成功后立即获得复活机会
+- 分享文案：“我在《管道净化消消乐》中遇到难关，快来帮我一起净化水源吧！”
+
+#### 5.4.2 道具获取系统
+**炸弹道具获取**
+- 每日最多可获得5个免费炸弹
+- 获取方式与复活系统相同：看广告或分享
+
+**看广告获得炸弹**
+- 在游戏主界面或游戏中点击“免费炸弹”
+- 播放15-30秒的激励视频广告
+- 广告完成后获得一个随机道具（PP棉/CTO/RO中一种）
+
+**分享获得炸弹**
+- 在主界面点击“分享获得道具”
+- 分享文案：“《点点够管道净化游戏》太好玩了！还能学到水质知识，快来一起体验吧！”
+- 分享成功后获得随机道具
 
 #### 5.1.4 品牌元素融入
 - **产品展示**: 游戏中净水器外观基于真实产品设计，展示5G芯片模块
@@ -348,13 +384,32 @@ GameStateData = {
 - **结果展示**: 水质越差颜色越深(黄色到黑色)，清洁水无明显变化
 - **科普解释**: 简单说明电解原理，不过于专业
 
-### 5.3 社交功能
-#### 5.3.1 排行榜系统
+### 5.5 5G智能功能体验
+
+#### 5.5.1 远程控制模拟
+**游戏内智能手机**
+- 游戏右上角显示一个小手机图标
+- 点击后弹出“点点够APP”界面
+- 可以查看当前水质状态和滤芯余量
+
+**智能提醒系统**
+- 当污染物堆积过多时，手机会震动提醒
+- 玩家可以点击“远程强冲”按钮
+- 强冲后会清除一小部分污染物，但有冷却时间
+
+#### 5.5.2 品牌特色展示
+- **产品外观**: 游戏中的净水器形象基于真实产品
+- **5G芯片展示**: 净水器上有闪烁的芯片指示灯
+- **价格优势**: 游戏内商城展示“980元用2年”的价值
+- **技术科普**: 通过游戏教育用户了解RO技术原理
+### 5.6 社交功能
+
+#### 5.6.1 排行榜系统
 - 周排行榜
 - 好友排行榜
 - 全服排行榜
 
-#### 5.3.2 分享机制
+#### 5.6.2 分享机制
 - 通关成就分享
 - 邀请好友获得奖励
 - 品牌信息传播
@@ -386,7 +441,22 @@ graph TD
 - **道具栏**（底部）：PP棉、CTO、RO特殊道具
 - **得分显示**（左上角）：当前得分和连击数
 
-### 6.3 品牌展示区域
+### 6.3 复活界面设计
+- **游戏结束弹窗**: 显示“污染物进入家庭！”的失败提示
+- **复活选项卡片**: 两个并排的按钮
+  - 左侧：“看广告复活” + 广告图标
+  - 右侧：“分享复活” + 微信图标
+- **复活次数显示**: “本局剩余复活次数：X/2”
+- **放弃游戏按钮**: 小字体的“放弃”选项
+
+### 6.4 道具获取界面
+- **主界面入口**: “免费道具”按钮，显示剩余获取次数
+- **获取方式选择**:
+  - “看广告获得” + 倒计时显示
+  - “分享获得” + 今日剩余次数
+- **奖励预览**: 显示可获得的道具类型和数量
+
+### 6.5 品牌展示区域
 - 开场Logo展示
 - 游戏内产品介绍弹窗
 - 通关奖励页面品牌信息
@@ -443,19 +513,23 @@ graph LR
 - **健康问卷**: 游戏内嵌入家庭用水习惯调研
 - **产品体验**: 免费水质检测和产品试用申请
 
-### 8.3 教育性营销活动
-```mermaid
-graph TD
-    A[新用户科普活动] --> A1[水质安全知识分享奖金币]
-    A --> A2[管道污染科普答题礼包]
-    
-    B[日常教育活动] --> B1[每日水质小知识签到]
-    B --> B2[家庭用水健康挑战赛]
-    
-    C[品牌主题活动] --> C1[产品发布配合游戏更新]
-    C --> C2[世界水日特别活动]
-    C --> C3[健康生活节线下活动联动]
-    C --> C4[用户真实水质检测体验分享]
+### 8.4 复活与道具营销策略
+
+#### 8.4.1 广告变现机制
+- **激励视频广告**: 与腾讯流量主平台对接，获得广告收入分成
+- **广告频率控制**: 避免过度打扰用户体验，合理设置广告触发频率
+- **个性化广告**: 根据用户游戏习惯和地域特点展示相关广告
+
+#### 8.4.2 社交传播优化
+- **分享内容优化**: 设计吸引人的分享文案和图片
+- **好友邀请机制**: 分享成功后给予分享者额外奖励
+- **群聊传播**: 鼓励分享到微信群，扩大传播范围
+- **病毒式传播**: 在游戏中融入“帮助好友”的社交元素
+
+#### 8.4.3 用户留存优化
+- **每日免费道具**: 鼓励用户每天登录获取免费资源
+- **限时特殊活动**: 在特定时段增加广告奖励或分享奖励
+- **成就系统**: 达成特定成就后获得特殊道具奖励
 ```
 
 ## 9. 数据流设计

@@ -1,0 +1,675 @@
+/* pages/shop/shop.wxss */
+
+.shop-page {
+  background: linear-gradient(135deg, #fff3e0 0%, #e8f5e8 50%, #e3f2fd 100%);
+  min-height: 100vh;
+  padding: 20rpx;
+}
+
+/* =============  页面头部  ============= */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(135deg, #ff9800 0%, #ffb74d 100%);
+  border-radius: 20rpx;
+  padding: 30rpx;
+  margin-bottom: 30rpx;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.page-header::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -30%;
+  width: 100%;
+  height: 200%;
+  background: radial-gradient(ellipse, rgba(255,255,255,0.1) 0%, transparent 70%);
+  animation: rotate 20s linear infinite;
+}
+
+.header-content {
+  position: relative;
+  z-index: 2;
+}
+
+.page-title {
+  display: block;
+  font-size: 40rpx;
+  font-weight: 700;
+  margin-bottom: 8rpx;
+}
+
+.page-subtitle {
+  font-size: 28rpx;
+  opacity: 0.9;
+}
+
+.user-coins {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 15rpx 25rpx;
+  border-radius: 25rpx;
+  position: relative;
+  z-index: 2;
+}
+
+.coins-icon {
+  font-size: 32rpx;
+  margin-right: 10rpx;
+}
+
+.coins-amount {
+  font-size: 32rpx;
+  font-weight: 700;
+}
+
+/* =============  每日免费区域  ============= */
+.daily-free-section {
+  margin-bottom: 30rpx;
+}
+
+.section-title {
+  text-align: center;
+  margin-bottom: 25rpx;
+}
+
+.title-text {
+  display: block;
+  font-size: 36rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8rpx;
+}
+
+.title-subtitle {
+  font-size: 28rpx;
+  color: var(--text-secondary);
+}
+
+.free-methods {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20rpx;
+}
+
+.free-method-card {
+  background: white;
+  border-radius: 20rpx;
+  padding: 25rpx;
+  box-shadow: 0 8rpx 25rpx rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.method-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15rpx;
+}
+
+.method-icon {
+  font-size: 32rpx;
+  margin-right: 10rpx;
+}
+
+.method-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.method-content {
+  flex: 1;
+  margin-bottom: 20rpx;
+}
+
+.method-desc {
+  display: block;
+  font-size: 24rpx;
+  color: var(--text-secondary);
+  margin-bottom: 15rpx;
+  line-height: 1.4;
+}
+
+.progress-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.progress-text {
+  font-size: 22rpx;
+  color: var(--text-secondary);
+}
+
+.method-btn {
+  width: 100%;
+  height: 80rpx;
+  font-size: 26rpx;
+}
+
+/* =============  道具商品区域  ============= */
+.products-section {
+  margin-bottom: 30rpx;
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20rpx;
+}
+
+.product-card {
+  background: white;
+  border-radius: 20rpx;
+  padding: 25rpx;
+  box-shadow: 0 8rpx 25rpx rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.product-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 20rpx;
+}
+
+.product-icon {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 36rpx;
+}
+
+.product-icon.pp {
+  background: linear-gradient(135deg, #795548 0%, #8d6e63 100%);
+}
+
+.product-icon.cto {
+  background: linear-gradient(135deg, #424242 0%, #616161 100%);
+}
+
+.product-icon.ro {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+}
+
+.product-badge {
+  background: var(--error-color);
+  color: white;
+  font-size: 20rpx;
+  padding: 6rpx 12rpx;
+  border-radius: 15rpx;
+  font-weight: 600;
+}
+
+.product-badge.recommended {
+  background: var(--success-color);
+}
+
+.product-badge.premium {
+  background: linear-gradient(135deg, #9c27b0 0%, #e91e63 100%);
+}
+
+.product-info {
+  margin-bottom: 20rpx;
+}
+
+.product-name {
+  display: block;
+  font-size: 32rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8rpx;
+}
+
+.product-desc {
+  display: block;
+  font-size: 26rpx;
+  color: var(--text-secondary);
+  margin-bottom: 15rpx;
+}
+
+.product-effects {
+  display: flex;
+  flex-direction: column;
+  gap: 5rpx;
+}
+
+.effect-item {
+  font-size: 22rpx;
+  color: var(--success-color);
+  line-height: 1.3;
+}
+
+.product-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15rpx;
+}
+
+.product-price {
+  display: flex;
+  align-items: baseline;
+  gap: 5rpx;
+}
+
+.price-currency {
+  font-size: 24rpx;
+}
+
+.price-amount {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.price-unit {
+  font-size: 20rpx;
+  color: var(--text-secondary);
+}
+
+.quantity-selector {
+  display: flex;
+  align-items: center;
+  background: var(--bg-light);
+  border-radius: 25rpx;
+  padding: 5rpx;
+}
+
+.quantity-btn {
+  width: 50rpx;
+  height: 50rpx;
+  background: white;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+}
+
+.quantity-btn:active {
+  transform: scale(0.95);
+}
+
+.quantity-value {
+  width: 60rpx;
+  text-align: center;
+  font-size: 24rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.buy-btn {
+  flex-shrink: 0;
+  width: 120rpx;
+  height: 60rpx;
+  font-size: 24rpx;
+}
+
+/* =============  套餐优惠区域  ============= */
+.packages-section {
+  margin-bottom: 30rpx;
+}
+
+.packages-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.package-card {
+  background: white;
+  border-radius: 20rpx;
+  padding: 30rpx;
+  box-shadow: 0 10rpx 30rpx rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.package-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6rpx;
+}
+
+.package-card.starter::before {
+  background: linear-gradient(90deg, #ffeb3b 0%, #ffc107 100%);
+}
+
+.package-card.advanced::before {
+  background: linear-gradient(90deg, #4caf50 0%, #8bc34a 100%);
+}
+
+.package-card.master::before {
+  background: linear-gradient(90deg, #9c27b0 0%, #e91e63 100%);
+}
+
+.package-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20rpx;
+}
+
+.package-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.package-badge {
+  background: var(--error-color);
+  color: white;
+  font-size: 20rpx;
+  padding: 6rpx 12rpx;
+  border-radius: 15rpx;
+  font-weight: 600;
+}
+
+.package-content {
+  margin-bottom: 25rpx;
+}
+
+.package-desc {
+  display: block;
+  font-size: 26rpx;
+  color: var(--text-secondary);
+  margin-bottom: 20rpx;
+}
+
+.package-items {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+  margin-bottom: 20rpx;
+}
+
+.package-item {
+  font-size: 24rpx;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.package-price {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.original-price {
+  font-size: 24rpx;
+  color: var(--text-secondary);
+  text-decoration: line-through;
+}
+
+.discounted-price {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--error-color);
+}
+
+.package-btn {
+  width: 100%;
+  height: 80rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+}
+
+/* =============  金币充值区域  ============= */
+.coins-section {
+  margin-bottom: 30rpx;
+}
+
+.coins-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15rpx;
+}
+
+.coin-option {
+  background: white;
+  border-radius: 15rpx;
+  padding: 25rpx 15rpx;
+  text-align: center;
+  box-shadow: 0 6rpx 20rpx rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.coin-option:active {
+  transform: translateY(-5rpx);
+  box-shadow: 0 10rpx 30rpx rgba(0, 0, 0, 0.15);
+}
+
+.coin-amount {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: var(--warning-color);
+  margin-bottom: 8rpx;
+}
+
+.coin-price {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 5rpx;
+}
+
+.coin-bonus {
+  font-size: 20rpx;
+  color: var(--success-color);
+  position: absolute;
+  top: -8rpx;
+  right: -8rpx;
+  background: rgba(76, 175, 80, 0.1);
+  padding: 4rpx 8rpx;
+  border-radius: 10rpx;
+  border: 2rpx solid var(--success-color);
+}
+
+/* =============  我的道具区域  ============= */
+.inventory-section {
+  margin-bottom: 30rpx;
+}
+
+.inventory-list {
+  background: white;
+  border-radius: 20rpx;
+  padding: 20rpx;
+  box-shadow: 0 8rpx 25rpx rgba(0, 0, 0, 0.1);
+}
+
+.inventory-item {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 0;
+  border-bottom: 2rpx solid var(--bg-light);
+}
+
+.inventory-item:last-child {
+  border-bottom: none;
+}
+
+.item-icon {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 20rpx;
+  color: white;
+  font-size: 28rpx;
+}
+
+.item-icon.pp {
+  background: linear-gradient(135deg, #795548 0%, #8d6e63 100%);
+}
+
+.item-icon.cto {
+  background: linear-gradient(135deg, #424242 0%, #616161 100%);
+}
+
+.item-icon.ro {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+}
+
+.item-info {
+  flex: 1;
+}
+
+.item-name {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 5rpx;
+}
+
+.item-count {
+  font-size: 24rpx;
+  color: var(--text-secondary);
+}
+
+/* =============  购买弹窗  ============= */
+.purchase-modal {
+  max-width: 600rpx;
+}
+
+.purchase-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 25rpx;
+  padding: 20rpx;
+  background: var(--bg-light);
+  border-radius: 15rpx;
+}
+
+.purchase-icon {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 20rpx;
+  color: white;
+  font-size: 36rpx;
+}
+
+.purchase-icon.pp {
+  background: linear-gradient(135deg, #795548 0%, #8d6e63 100%);
+}
+
+.purchase-icon.cto {
+  background: linear-gradient(135deg, #424242 0%, #616161 100%);
+}
+
+.purchase-icon.ro {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+}
+
+.purchase-info {
+  flex: 1;
+}
+
+.purchase-name {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 5rpx;
+}
+
+.purchase-quantity {
+  font-size: 24rpx;
+  color: var(--text-secondary);
+}
+
+.purchase-total {
+  text-align: center;
+  margin-bottom: 20rpx;
+  padding: 20rpx;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+  border-radius: 15rpx;
+  color: white;
+}
+
+.total-label {
+  font-size: 24rpx;
+  margin-right: 10rpx;
+}
+
+.total-amount {
+  font-size: 36rpx;
+  font-weight: 700;
+}
+
+.balance-check {
+  text-align: center;
+  margin-bottom: 20rpx;
+}
+
+.insufficient-text {
+  color: var(--error-color);
+  font-size: 26rpx;
+  font-weight: 600;
+}
+
+/* =============  响应式适配  ============= */
+@media (max-width: 400px) {
+  .free-methods {
+    grid-template-columns: 1fr;
+  }
+  
+  .coins-options {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .product-footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 15rpx;
+  }
+  
+  .buy-btn {
+    width: 100%;
+  }
+}
+
+/* =============  动画效果  ============= */
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.product-badge {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.package-badge {
+  animation: pulse 2s ease-in-out infinite;
+}"

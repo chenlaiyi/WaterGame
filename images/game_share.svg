@@ -1,0 +1,40 @@
+<!-- 游戏分享图片占位符 520x416 -->
+<svg width="520" height="416" viewBox="0 0 520 416" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="gameBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff9800;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ffb74d;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- 背景 -->
+  <rect width="520" height="416" fill="url(#gameBg)"/>
+  
+  <!-- 游戏网格模拟 -->
+  <g transform="translate(160, 80)">
+    <rect x="0" y="0" width="30" height="30" rx="5" fill="#795548"/>
+    <rect x="35" y="0" width="30" height="30" rx="5" fill="#4caf50"/>
+    <rect x="70" y="0" width="30" height="30" rx="5" fill="#9c27b0"/>
+    <rect x="105" y="0" width="30" height="30" rx="5" fill="#795548"/>
+    <rect x="140" y="0" width="30" height="30" rx="5" fill="#4caf50"/>
+    
+    <rect x="0" y="35" width="30" height="30" rx="5" fill="#4caf50"/>
+    <rect x="35" y="35" width="30" height="30" rx="5" fill="#795548"/>
+    <rect x="70" y="35" width="30" height="30" rx="5" fill="#795548"/>
+    <rect x="105" y="35" width="30" height="30" rx="5" fill="#9c27b0"/>
+    <rect x="140" y="35" width="30" height="30" rx="5" fill="#4caf50"/>
+  </g>
+  
+  <!-- 标题 -->
+  <text x="260" y="40" text-anchor="middle" font-size="24" font-weight="bold" fill="white">我正在挑战净化管道！</text>
+  
+  <!-- 游戏状态 -->
+  <text x="260" y="200" text-anchor="middle" font-size="20" fill="white" opacity="0.9">⏱️ 时间紧迫！消除污染物！</text>
+  <text x="260" y="230" text-anchor="middle" font-size="18" fill="white" opacity="0.8">🎯 目标：清理管道保护家庭用水</text>
+  
+  <!-- 邀请文字 -->
+  <rect x="60" y="280" width="400" height="80" rx="15" fill="white" opacity="0.9"/>
+  <text x="260" y="310" text-anchor="middle" font-size="20" font-weight="bold" fill="#ff9800">快来帮我一起净化水源！</text>
+  <text x="260" y="335" text-anchor="middle" font-size="16" fill="#666">点点够净水消消乐</text>
+  <text x="260" y="355" text-anchor="middle" font-size="14" fill="#999">学习净水知识 · 守护家庭健康</text>
+</svg>

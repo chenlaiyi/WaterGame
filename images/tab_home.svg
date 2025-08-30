@@ -1,0 +1,7 @@
+<!-- SVG占位符: 首页图标 -->
+<svg width="81" height="81" viewBox="0 0 81 81" xmlns="http://www.w3.org/2000/svg">
+  <rect width="81" height="81" rx="8" fill="#e0e0e0"/>
+  <path d="M20 35 L40.5 20 L61 35 L61 60 L20 60 Z" stroke="#666" stroke-width="2" fill="none"/>
+  <rect x="35" y="45" width="11" height="15" fill="#666"/>
+  <text x="40.5" y="70" text-anchor="middle" font-size="8" fill="#666">首页</text>
+</svg>

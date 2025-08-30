@@ -1,0 +1,231 @@
+<!-- pages/index/index.wxml -->
+<view class="container index-page">
+  <!-- 顶部品牌区域 -->
+  <view class="brand-header">
+    <view class="brand-logo-container">
+      <view class="brand-logo">💧</view>
+      <view class="brand-name">点点够</view>
+      <view class="brand-subtitle">净水消消乐</view>
+    </view>
+    
+    <!-- 用户信息区域 -->
+    <view class="user-info" wx:if="{{userInfo}}">
+      <image class="user-avatar" src="{{userInfo.avatarUrl || '/images/default_avatar.png'}}" />
+      <view class="user-details">
+        <text class="user-name">{{userInfo.nickName || '游客'}}</text>
+        <view class="user-stats">
+          <text class="user-level">等级 {{gameData.level}}</text>
+          <text class="user-coins">💰 {{gameData.coins}}</text>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 登录按钮 -->
+    <view class="login-section" wx:else>
+      <button class="btn btn-primary" open-type="getUserInfo" bindgetuserinfo="onGetUserInfo">
+        点击登录游戏
+      </button>
+    </view>
+  </view>
+
+  <!-- 游戏统计卡片 -->
+  <view class="stats-section">
+    <view class="stats-card">
+      <view class="stat-item">
+        <view class="stat-number">{{gameData.totalScore}}</view>
+        <view class="stat-label">最高得分</view>
+      </view>
+      <view class="stat-divider"></view>
+      <view class="stat-item">
+        <view class="stat-number">{{gameData.unlockedLevels.length}}</view>
+        <view class="stat-label">解锁关卡</view>
+      </view>
+      <view class="stat-divider"></view>
+      <view class="stat-item">
+        <view class="stat-number">{{gameData.achievements.length}}</view>
+        <view class="stat-label">获得成就</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 关卡选择区域 -->
+  <view class="levels-section">
+    <view class="section-title">
+      <text class="title-text">选择关卡</text>
+      <text class="title-subtitle">净化管道，保护家庭用水安全</text>
+    </view>
+    
+    <scroll-view class="levels-scroll" scroll-x="true">
+      <view class="levels-container">
+        <view 
+          class="level-item {{item <= gameData.maxUnlockedLevel ? 'unlocked' : 'locked'}}" 
+          wx:for="{{levelList}}" 
+          wx:key="*this"
+          data-level="{{item}}"
+          bindtap="onSelectLevel"
+        >
+          <view class="level-number">{{item}}</view>
+          <view class="level-status" wx:if="{{item <= gameData.maxUnlockedLevel}}">
+            <text class="level-stars">⭐⭐⭐</text>
+          </view>
+          <view class="level-lock" wx:else>🔒</view>
+          
+          <!-- 关卡难度指示 -->
+          <view class="level-difficulty">
+            <text wx:if="{{item <= 5}}" class="difficulty easy">简单</text>
+            <text wx:elif="{{item <= 15}}" class="difficulty medium">中等</text>
+            <text wx:elif="{{item <= 30}}" class="difficulty hard">困难</text>
+            <text wx:else class="difficulty expert">大师</text>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 功能菜单 -->
+  <view class="menu-section">
+    <view class="menu-grid">
+      <navigator class="menu-item" url="/pages/waterTest/waterTest" hover-class="menu-item-hover">
+        <view class="menu-icon water-test">🧪</view>
+        <view class="menu-text">
+          <text class="menu-title">水质检测</text>
+          <text class="menu-desc">学习净水知识</text>
+        </view>
+      </navigator>
+      
+      <navigator class="menu-item" url="/pages/shop/shop" hover-class="menu-item-hover">
+        <view class="menu-icon shop">🛒</view>
+        <view class="menu-text">
+          <text class="menu-title">道具商城</text>
+          <text class="menu-desc">获取游戏道具</text>
+        </view>
+      </navigator>
+      
+      <navigator class="menu-item" url="/pages/rank/rank" hover-class="menu-item-hover">
+        <view class="menu-icon rank">🏆</view>
+        <view class="menu-text">
+          <text class="menu-title">排行榜</text>
+          <text class="menu-desc">挑战好友</text>
+        </view>
+      </navigator>
+      
+      <view class="menu-item" bindtap="onShowBrandInfo">
+        <view class="menu-icon brand">💎</view>
+        <view class="menu-text">
+          <text class="menu-title">点点够净水器</text>
+          <text class="menu-desc">980元用2年</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 每日任务提醒 -->
+  <view class="daily-task-section" wx:if="{{dailyTasks.length > 0}}">
+    <view class="section-title">
+      <text class="title-text">每日任务</text>
+    </view>
+    <view class="task-list">
+      <view 
+        class="task-item {{task.completed ? 'completed' : ''}}"
+        wx:for="{{dailyTasks}}" 
+        wx:key="id"
+        data-task="{{task}}"
+        bindtap="onCompleteTask"
+      >
+        <view class="task-icon">{{task.completed ? '✅' : '⏰'}}</view>
+        <view class="task-info">
+          <text class="task-name">{{task.name}}</text>
+          <text class="task-reward">奖励: {{task.reward}}金币</text>
+        </view>
+        <view class="task-progress">{{task.progress}}/{{task.target}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 快速开始按钮 -->
+  <view class="quick-start-section">
+    <button 
+      class="btn btn-primary quick-start-btn" 
+      bindtap="onQuickStart"
+      disabled="{{gameData.maxUnlockedLevel < 1}}"
+    >
+      <text class="btn-text">🚀 快速开始</text>
+      <text class="btn-subtitle">继续上次关卡</text>
+    </button>
+  </view>
+
+  <!-- 设置按钮 -->
+  <view class="settings-btn" bindtap="onShowSettings">⚙️</view>
+</view>
+
+<!-- 品牌信息弹窗 -->
+<view class="modal-overlay" wx:if="{{showBrandModal}}" bindtap="onHideBrandModal">
+  <view class="modal brand-modal" catchtap="stopPropagation">
+    <view class="brand-modal-header">
+      <view class="brand-modal-logo">💧</view>
+      <view class="brand-modal-title">点点够净水器</view>
+      <view class="brand-modal-subtitle">RO反渗透技术 · 超值性价比</view>
+    </view>
+    
+    <view class="brand-modal-content">
+      <view class="feature-list">
+        <view class="feature-item">
+          <text class="feature-icon">🔬</text>
+          <text class="feature-text">RO反渗透膜技术，有效去除重金属和化学污染</text>
+        </view>
+        <view class="feature-item">
+          <text class="feature-icon">💰</text>
+          <text class="feature-text">980元用2年，平均每天仅需1.3元</text>
+        </view>
+        <view class="feature-item">
+          <text class="feature-icon">📱</text>
+          <text class="feature-text">5G智能芯片，远程监控水质状态</text>
+        </view>
+        <view class="feature-item">
+          <text class="feature-icon">🛡️</text>
+          <text class="feature-text">三级过滤保护，守护家庭饮水安全</text>
+        </view>
+      </view>
+      
+      <view class="price-highlight">
+        <text class="price-text">限时特价</text>
+        <text class="price-number">￥980</text>
+        <text class="price-desc">使用2年</text>
+      </view>
+    </view>
+    
+    <view class="brand-modal-actions">
+      <button class="btn btn-outline" bindtap="onHideBrandModal">了解更多</button>
+      <button class="btn btn-primary" bindtap="onContactUs">立即咨询</button>
+    </view>
+  </view>
+</view>
+
+<!-- 设置弹窗 -->
+<view class="modal-overlay" wx:if="{{showSettingsModal}}" bindtap="onHideSettingsModal">
+  <view class="modal settings-modal" catchtap="stopPropagation">
+    <view class="modal-title">游戏设置</view>
+    
+    <view class="setting-list">
+      <view class="setting-item">
+        <text class="setting-label">音效</text>
+        <switch class="setting-switch" checked="{{gameSettings.sound}}" bindchange="onSoundChange" />
+      </view>
+      
+      <view class="setting-item">
+        <text class="setting-label">音乐</text>
+        <switch class="setting-switch" checked="{{gameSettings.music}}" bindchange="onMusicChange" />
+      </view>
+      
+      <view class="setting-item">
+        <text class="setting-label">震动</text>
+        <switch class="setting-switch" checked="{{gameSettings.vibration}}" bindchange="onVibrationChange" />
+      </view>
+    </view>
+    
+    <view class="modal-actions">
+      <button class="btn btn-outline" bindtap="onResetGame">重置游戏</button>
+      <button class="btn btn-primary" bindtap="onHideSettingsModal">确定</button>
+    </view>
+  </view>
+</view>
