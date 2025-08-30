@@ -1,0 +1,56 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/game/game",
+    "pages/waterTest/waterTest",
+    "pages/shop/shop",
+    "pages/rank/rank"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#1296db",
+    "navigationBarTitleText": "点点够净水消消乐",
+    "navigationBarTextStyle": "white"
+  },
+  "tabBar": {
+    "color": "#7A7E83",
+    "selectedColor": "#1296db",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "iconPath": "images/tab_home.svg",
+        "selectedIconPath": "images/tab_home_active.svg",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/game/game",
+        "iconPath": "images/tab_game.svg",
+        "selectedIconPath": "images/tab_game_active.svg",
+        "text": "游戏"
+      },
+      {
+        "pagePath": "pages/shop/shop",
+        "iconPath": "images/tab_shop.svg",
+        "selectedIconPath": "images/tab_shop_active.svg",
+        "text": "商城"
+      },
+      {
+        "pagePath": "pages/rank/rank",
+        "iconPath": "images/tab_rank.svg",
+        "selectedIconPath": "images/tab_rank_active.svg",
+        "text": "排行榜"
+      }
+    ]
+  },
+  "cloud": true,
+  "plugins": {
+    "myPlugin": {
+      "version": "1.0.0",
+      "provider": "wx3b1a21ea64e9dfc3"
+    }
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}
