@@ -1,0 +1,608 @@
+/* pages/index/index.wxss */
+
+.index-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 50%, #e8f5e8 100%);
+}
+
+/* =============  品牌头部区域  ============= */
+.brand-header {
+  text-align: center;
+  padding: 40rpx 30rpx;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+  border-radius: 0 0 40rpx 40rpx;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.brand-header::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -20%;
+  width: 140%;
+  height: 200%;
+  background: radial-gradient(ellipse, rgba(255,255,255,0.1) 0%, transparent 70%);
+  animation: float 6s ease-in-out infinite;
+}
+
+.brand-logo-container {
+  position: relative;
+  z-index: 2;
+  margin-bottom: 30rpx;
+}
+
+.brand-logo {
+  font-size: 120rpx;
+  margin-bottom: 10rpx;
+  animation: bounce 2s ease-in-out infinite;
+}
+
+.brand-name {
+  font-size: 48rpx;
+  font-weight: 700;
+  margin-bottom: 10rpx;
+}
+
+.brand-subtitle {
+  font-size: 28rpx;
+  opacity: 0.9;
+}
+
+/* 用户信息区域 */
+.user-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 20rpx 30rpx;
+  border-radius: 50rpx;
+  margin-top: 20rpx;
+  position: relative;
+  z-index: 2;
+}
+
+.user-avatar {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  border: 3rpx solid white;
+  margin-right: 20rpx;
+}
+
+.user-details {
+  flex: 1;
+  text-align: left;
+}
+
+.user-name {
+  display: block;
+  font-size: 32rpx;
+  font-weight: 600;
+  margin-bottom: 8rpx;
+}
+
+.user-stats {
+  display: flex;
+  gap: 20rpx;
+}
+
+.user-level, .user-coins {
+  font-size: 24rpx;
+  background: rgba(255, 255, 255, 0.3);
+  padding: 4rpx 12rpx;
+  border-radius: 20rpx;
+}
+
+.login-section {
+  position: relative;
+  z-index: 2;
+  margin-top: 20rpx;
+}
+
+/* =============  统计卡片  ============= */
+.stats-section {
+  padding: 30rpx;
+}
+
+.stats-card {
+  background: white;
+  border-radius: 20rpx;
+  padding: 30rpx;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  box-shadow: 0 10rpx 30rpx rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.stats-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6rpx;
+  background: linear-gradient(90deg, var(--primary-color), var(--success-color), var(--warning-color));
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-number {
+  font-size: 48rpx;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin-bottom: 8rpx;
+}
+
+.stat-label {
+  font-size: 24rpx;
+  color: var(--text-secondary);
+}
+
+.stat-divider {
+  width: 2rpx;
+  height: 60rpx;
+  background: var(--border-color);
+}
+
+/* =============  关卡选择区域  ============= */
+.levels-section {
+  padding: 0 30rpx 30rpx;
+}
+
+.section-title {
+  text-align: center;
+  margin-bottom: 30rpx;
+}
+
+.title-text {
+  display: block;
+  font-size: 36rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 10rpx;
+}
+
+.title-subtitle {
+  font-size: 28rpx;
+  color: var(--text-secondary);
+}
+
+.levels-scroll {
+  white-space: nowrap;
+}
+
+.levels-container {
+  display: inline-flex;
+  gap: 20rpx;
+  padding: 20rpx 0;
+}
+
+.level-item {
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: 20rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.level-item.unlocked {
+  background: linear-gradient(135deg, var(--success-color) 0%, #66bb6a 100%);
+  color: white;
+  box-shadow: 0 8rpx 20rpx rgba(76, 175, 80, 0.3);
+}
+
+.level-item.locked {
+  background: var(--bg-light);
+  color: var(--text-disabled);
+  border: 2rpx dashed var(--border-color);
+}
+
+.level-item.unlocked:active {
+  transform: scale(0.95);
+}
+
+.level-number {
+  font-size: 32rpx;
+  font-weight: 700;
+  margin-bottom: 8rpx;
+}
+
+.level-stars {
+  font-size: 20rpx;
+}
+
+.level-lock {
+  font-size: 28rpx;
+}
+
+.level-difficulty {
+  position: absolute;
+  bottom: -10rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4rpx 12rpx;
+  border-radius: 20rpx;
+  font-size: 20rpx;
+}
+
+.difficulty.easy {
+  background: var(--success-color);
+  color: white;
+}
+
+.difficulty.medium {
+  background: var(--warning-color);
+  color: white;
+}
+
+.difficulty.hard {
+  background: var(--error-color);
+  color: white;
+}
+
+.difficulty.expert {
+  background: linear-gradient(135deg, #9c27b0 0%, #e91e63 100%);
+  color: white;
+}
+
+/* =============  功能菜单  ============= */
+.menu-section {
+  padding: 30rpx;
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20rpx;
+}
+
+.menu-item {
+  background: white;
+  border-radius: 20rpx;
+  padding: 30rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 8rpx 25rpx rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.menu-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4rpx;
+  background: var(--primary-color);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.menu-item-hover {
+  transform: translateY(-5rpx);
+  box-shadow: 0 15rpx 35rpx rgba(0, 0, 0, 0.15);
+}
+
+.menu-item-hover::before {
+  transform: scaleX(1);
+}
+
+.menu-icon {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+  color: white;
+  margin-bottom: 20rpx;
+}
+
+.menu-icon.water-test {
+  background: linear-gradient(135deg, #2196f3 0%, #42a5f5 100%);
+}
+
+.menu-icon.shop {
+  background: linear-gradient(135deg, #ff9800 0%, #ffb74d 100%);
+}
+
+.menu-icon.rank {
+  background: linear-gradient(135deg, #ffc107 0%, #ffd54f 100%);
+}
+
+.menu-icon.brand {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+}
+
+.menu-text {
+  width: 100%;
+}
+
+.menu-title {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8rpx;
+}
+
+.menu-desc {
+  font-size: 24rpx;
+  color: var(--text-secondary);
+}
+
+/* =============  每日任务  ============= */
+.daily-task-section {
+  padding: 0 30rpx 30rpx;
+}
+
+.task-list {
+  background: white;
+  border-radius: 20rpx;
+  overflow: hidden;
+  box-shadow: 0 8rpx 25rpx rgba(0, 0, 0, 0.1);
+}
+
+.task-item {
+  display: flex;
+  align-items: center;
+  padding: 30rpx;
+  border-bottom: 2rpx solid var(--bg-light);
+  transition: background 0.3s ease;
+}
+
+.task-item:last-child {
+  border-bottom: none;
+}
+
+.task-item:active {
+  background: var(--bg-light);
+}
+
+.task-item.completed {
+  opacity: 0.6;
+}
+
+.task-icon {
+  font-size: 32rpx;
+  margin-right: 20rpx;
+}
+
+.task-info {
+  flex: 1;
+}
+
+.task-name {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8rpx;
+}
+
+.task-reward {
+  font-size: 24rpx;
+  color: var(--success-color);
+}
+
+.task-progress {
+  font-size: 24rpx;
+  color: var(--text-secondary);
+  padding: 8rpx 16rpx;
+  background: var(--bg-light);
+  border-radius: 20rpx;
+}
+
+/* =============  快速开始按钮  ============= */
+.quick-start-section {
+  padding: 0 30rpx 30rpx;
+}
+
+.quick-start-btn {
+  width: 100%;
+  height: 120rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-text {
+  font-weight: 700;
+  margin-bottom: 8rpx;
+}
+
+.btn-subtitle {
+  font-size: 24rpx;
+  opacity: 0.8;
+}
+
+/* =============  设置按钮  ============= */
+.settings-btn {
+  position: fixed;
+  top: 100rpx;
+  right: 30rpx;
+  width: 80rpx;
+  height: 80rpx;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36rpx;
+  box-shadow: 0 8rpx 20rpx rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.settings-btn:active {
+  transform: scale(0.95);
+  background: white;
+}
+
+/* =============  弹窗样式  ============= */
+.brand-modal {
+  max-width: 650rpx;
+}
+
+.brand-modal-header {
+  text-align: center;
+  margin-bottom: 30rpx;
+}
+
+.brand-modal-logo {
+  font-size: 80rpx;
+  margin-bottom: 20rpx;
+  animation: rotate 3s linear infinite;
+}
+
+.brand-modal-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin-bottom: 10rpx;
+}
+
+.brand-modal-subtitle {
+  font-size: 28rpx;
+  color: var(--text-secondary);
+}
+
+.feature-list {
+  margin: 30rpx 0;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.feature-icon {
+  font-size: 32rpx;
+  margin-right: 20rpx;
+  width: 40rpx;
+}
+
+.feature-text {
+  flex: 1;
+  font-size: 28rpx;
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+.price-highlight {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+  color: white;
+  padding: 30rpx;
+  border-radius: 15rpx;
+  text-align: center;
+  margin: 30rpx 0;
+}
+
+.price-text {
+  display: block;
+  font-size: 24rpx;
+  margin-bottom: 10rpx;
+  opacity: 0.9;
+}
+
+.price-number {
+  display: block;
+  font-size: 56rpx;
+  font-weight: 700;
+  margin-bottom: 8rpx;
+}
+
+.price-desc {
+  font-size: 28rpx;
+  opacity: 0.9;
+}
+
+/* 设置弹窗 */
+.settings-modal {
+  max-width: 500rpx;
+}
+
+.setting-list {
+  margin: 30rpx 0;
+}
+
+.setting-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 25rpx 0;
+  border-bottom: 2rpx solid var(--bg-light);
+}
+
+.setting-item:last-child {
+  border-bottom: none;
+}
+
+.setting-label {
+  font-size: 30rpx;
+  color: var(--text-primary);
+}
+
+.setting-switch {
+  transform: scale(0.8);
+}
+
+/* =============  动画增强  ============= */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  33% {
+    transform: translateY(-10px) rotate(1deg);
+  }
+  66% {
+    transform: translateY(5px) rotate(-1deg);
+  }
+}
+
+/* =============  响应式适配  ============= */
+@media (max-width: 400px) {
+  .brand-logo {
+    font-size: 100rpx;
+  }
+  
+  .brand-name {
+    font-size: 40rpx;
+  }
+  
+  .menu-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .levels-container {
+    gap: 15rpx;
+  }
+  
+  .level-item {
+    width: 120rpx;
+    height: 120rpx;
+  }
+}
