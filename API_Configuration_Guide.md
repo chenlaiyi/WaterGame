@@ -1,52 +1,46 @@
-# API配置指南
+# WaterGame项目 API配置指南
 
 ## 概述
 
-本文档描述了如何为点点够净水消消乐游戏配置API接口，包括服务器端和客户端的配置要求。
+本文档描述了WaterGame项目中所有游戏相关的API接口，包括游戏配置管理、数据分析和活动管理等功能。
 
-## API基础信息
+## API基本信息
 
-### 基础URL
-根据用户反馈，API的URL应该是：
-```
-https://pay.itapgo.com/api/game/v1/
-```
+- **基础URL**: `/api/game/v1`
+- **数据格式**: JSON
+- **字符编码**: UTF-8
+- **HTTP方法**: GET, POST, PUT, DELETE
 
-### 请求格式
-- **Content-Type**: `application/json`
-- **请求方法**: GET, POST, PUT, DELETE
-- **响应格式**: JSON
+## 响应格式
 
-### 通用响应结构
+所有API接口的响应都遵循统一格式：
+
 ```json
 {
   "code": 200,
-  "message": "操作成功",
+  "message": "成功",
   "data": {}
 }
 ```
 
-### 状态码说明
-- `200`: 成功
-- `400`: 请求参数错误
-- `401`: 未授权
-- `403`: 禁止访问
-- `404`: 资源不存在
-- `500`: 服务器内部错误
+## 1. 游戏配置管理 API
 
-## 游戏配置API
+### 1.1 获取配置列表
 
-### 1. 获取配置列表
+**请求**
+```
+GET /api/game/v1/config
+```
 
-**接口**: `GET /api/game/v1/config`
+**参数**
+- `search` (string, 可选): 搜索关键词
+- `status` (integer, 可选): 状态 (0=禁用, 1=启用)
+- `type` (string, 可选): 配置类型
+- `sort_by` (string, 可选): 排序字段 (默认: id)
+- `sort_order` (string, 可选): 排序方向 (asc/desc, 默认: desc)
+- `per_page` (integer, 可选): 每页数量 (默认: 15)
 
-**参数**:
-- `search` (string, optional): 搜索关键词
-- `status` (int, optional): 状态筛选 (0:禁用, 1:启用)
-- `page` (int, optional): 页码，默认1
-- `per_page` (int, optional): 每页数量，默认15
-
-**响应示例**:
+**响应示例**
 ```json
 {
   "code": 200,
@@ -56,163 +50,198 @@ https://pay.itapgo.com/api/game/v1/
     "data": [
       {
         "id": 1,
-        "name": "游戏时间限制",
-        "type": "gameplay",
-        "value": "300",
-        "description": "每局游戏的时间限制（秒）",
+        "config_key": "game_level_count",
+        "config_name": "游戏关卡数量",
+        "config_value": "10",
+        "config_type": "integer",
+        "description": "游戏的总关卡数",
         "status": 1,
-        "created_at": "2023-12-01 10:00:00",
-        "updated_at": "2023-12-01 10:00:00"
+        "created_at": "2025-08-31T10:00:00.000000Z",
+        "updated_at": "2025-08-31T10:00:00.000000Z"
       }
     ],
-    "total": 1,
     "per_page": 15,
-    "current_page": 1,
-    "last_page": 1
+    "total": 1
   }
 }
 ```
 
-### 2. 创建配置
+### 1.2 创建配置
 
-**接口**: `POST /api/game/v1/config`
+**请求**
+```
+POST /api/game/v1/config
+```
 
-**请求参数**:
+**请求参数**
 ```json
 {
-  "name": "配置名称",
-  "type": "配置类型",
-  "value": "配置值",
-  "description": "配置描述",
+  "config_key": "game_difficulty",
+  "config_name": "游戏难度",
+  "config_value": "normal",
+  "config_type": "string",
+  "description": "游戏默认难度设置",
   "status": 1
 }
 ```
 
-**字段说明**:
-- `name` (required): 配置名称，最长100字符
-- `type` (required): 配置类型，最长50字符
-- `value` (required): 配置值
-- `description` (optional): 配置描述，最长255字符
-- `status` (optional): 状态，默认1
+### 1.3 更新配置
 
-### 3. 获取单个配置
-
-**接口**: `GET /api/game/v1/config/{id}`
-
-**响应示例**:
-```json
-{
-  "code": 200,
-  "message": "获取成功",
-  "data": {
-    "id": 1,
-    "name": "游戏时间限制",
-    "type": "gameplay",
-    "value": "300",
-    "description": "每局游戏的时间限制（秒）",
-    "status": 1,
-    "created_at": "2023-12-01 10:00:00",
-    "updated_at": "2023-12-01 10:00:00"
-  }
-}
+**请求**
+```
+PUT /api/game/v1/config/{id}
 ```
 
-### 4. 更新配置
+### 1.4 删除配置
 
-**接口**: `PUT /api/game/v1/config/{id}`
+**请求**
+```
+DELETE /api/game/v1/config/{id}
+```
 
-**请求参数**: 与创建接口相同，但所有字段都是可选的
+## 2. 游戏数据分析 API
 
-### 5. 删除配置
+### 2.1 获取仪表板数据
 
-**接口**: `DELETE /api/game/v1/config/{id}`
+**请求**
+```
+GET /api/game/v1/analytics/dashboard
+```
 
-## 游戏数据分析API
-
-### 1. 获取仪表板数据
-
-**接口**: `GET /api/game/v1/analytics/dashboard`
-
-**响应示例**:
+**响应示例**
 ```json
 {
   "code": 200,
-  "message": "获取成功",
+  "message": "成功",
   "data": {
-    "totalPlayers": 1523,
-    "totalSessions": 8934,
-    "avgScore": 1250.5,
-    "avgDuration": 185.2,
+    "totalPlayers": 1256,
+    "totalSessions": 8943,
+    "avgScore": 2850,
+    "avgDuration": 180,
     "dailyStats": [
       {
-        "date": "2023-12-01",
-        "sessions": 156,
-        "players": 89
+        "date": "2025-08-31",
+        "players": 89,
+        "sessions": 234,
+        "avgScore": 2920
       }
     ]
   }
 }
 ```
 
-### 2. 获取玩家列表
+### 2.2 获取玩家列表
 
-**接口**: `GET /api/game/v1/analytics/players`
+**请求**
+```
+GET /api/game/v1/analytics/players
+```
 
-**参数**:
-- `search` (string, optional): 搜索关键词
-- `sort_by` (string, optional): 排序字段
-- `page` (int, optional): 页码
-- `per_page` (int, optional): 每页数量
+**参数**
+- `search` (string, 可选): 搜索玩家昵称或OpenID
+- `sort_by` (string, 可选): 排序方式 (best_score/total_games/created_at/last_played_at)
+- `page` (integer, 可选): 页码
+- `per_page` (integer, 可选): 每页数量
 
-### 3. 获取玩家游戏记录
+### 2.3 获取玩家游戏记录
 
-**接口**: `GET /api/game/v1/analytics/players/{id}/sessions`
+**请求**
+```
+GET /api/game/v1/analytics/players/{id}/sessions
+```
 
-## 游戏活动管理API
+## 3. 游戏活动管理 API
 
-### 1. 获取活动列表
+### 3.1 获取活动列表
 
-**接口**: `GET /api/game/v1/activity`
+**请求**
+```
+GET /api/game/v1/activity
+```
 
-**参数**:
-- `search` (string, optional): 搜索关键词
-- `status` (int, optional): 状态筛选
-- `type` (string, optional): 活动类型
+**参数**
+- `search` (string, 可选): 搜索活动名称
+- `status` (integer, 可选): 活动状态
+- `type` (string, 可选): 活动类型
 
-### 2. 创建活动
-
-**接口**: `POST /api/game/v1/activity`
-
-**请求参数**:
+**响应示例**
 ```json
 {
-  "name": "活动名称",
-  "type": "活动类型",
-  "description": "活动描述",
-  "config": "{\"目标分数\": 1000}",
-  "start_time": "2023-12-01 10:00:00",
-  "end_time": "2023-12-31 23:59:59",
-  "status": 1,
-  "reward_config": "{\"奖励\": 100}"
+  "code": 200,
+  "message": "成功",
+  "data": {
+    "data": [
+      {
+        "id": 1,
+        "name": "春节消消乐挑战",
+        "type": "seasonal_event",
+        "description": "春节特别活动",
+        "start_time": "2025-02-01 00:00:00",
+        "end_time": "2025-02-15 23:59:59",
+        "config": "{\"reward_multiplier\": 2}",
+        "status": 1,
+        "created_at": "2025-08-31T10:00:00.000000Z"
+      }
+    ],
+    "total": 1
+  }
 }
 ```
 
-## 错误处理
+### 3.2 创建活动
 
-所有API都包含统一的错误处理机制：
+**请求**
+```
+POST /api/game/v1/activity
+```
 
+**请求参数**
 ```json
 {
-  "code": 400,
-  "message": "参数验证失败：配置名称不能为空",
-  "data": null
+  "name": "夏日消消乐大赛",
+  "type": "weekly_tournament",
+  "description": "夏日特别比赛活动",
+  "start_time": "2025-06-01 00:00:00",
+  "end_time": "2025-06-30 23:59:59",
+  "config": "{\"max_participants\": 1000}",
+  "status": 1
 }
 ```
 
-## 认证和权限
+### 3.3 切换活动状态
 
-目前的API接口需要管理员身份认证，请确保在请求头中包含适当的认证信息。
+**请求**
+```
+POST /api/game/v1/activity/{id}/toggle-status
+```
 
-## 测试指南
+### 3.4 获取活动参与者
 
-建议使用Postman或类似工具测试API接口，确保在集成到前端之前所有接口都能正常工作。
+**请求**
+```
+GET /api/game/v1/activity/{id}/participants
+```
+
+### 3.5 获取活动统计
+
+**请求**
+```
+GET /api/game/v1/activity/{id}/statistics
+```
+
+## 错误码说明
+
+- `200`: 成功
+- `400`: 参数错误
+- `401`: 未授权
+- `403`: 禁止访问
+- `404`: 资源不存在
+- `500`: 服务器内部错误
+
+## 注意事项
+
+1. 所有API都需要适当的身份验证
+2. 请求和响应数据都使用UTF-8编码
+3. 日期时间格式为: YYYY-MM-DD HH:mm:ss
+4. 分页查询默认每页显示15条记录
+5. 所有删除操作都是物理删除，请谨慎操作
