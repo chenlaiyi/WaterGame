@@ -15,11 +15,9 @@ class MatchEngine {
     if (!block) return
 
     if (!this.selectedBlock) {
-      // 选中第一个方块
       this.selectedBlock = block
       this.highlightBlock(block)
     } else {
-      // 选中第二个方块，尝试交换
       if (this.isAdjacent(this.selectedBlock, block)) {
         this.swapBlocks(this.selectedBlock, block)
         this.checkAndClearMatches()
@@ -55,11 +53,9 @@ class MatchEngine {
       this.combo++
       this.calculateScore(matches.length)
       
-      // 掉落填充
       setTimeout(() => {
         this.dropBlocks()
         this.fillEmptySpaces()
-        // 递归检查新的匹配
         this.checkAndClearMatches()
       }, 300)
     } else {
@@ -70,7 +66,6 @@ class MatchEngine {
   // 查找所有匹配
   findMatches() {
     const matches = []
-    const blocks = this.gameManager.gameArea.blocks
     
     // 检查水平匹配
     for (let row = 0; row < 12; row++) {
@@ -122,21 +117,9 @@ class MatchEngine {
       })
     })
     
-    // 播放消除动画
-    this.playEliminateAnimation(Array.from(blocksToRemove))
-    
-    // 从游戏区域移除方块
     this.gameManager.gameArea.blocks = this.gameManager.gameArea.blocks.filter(
       block => !blocksToRemove.has(block.id)
     )
-  }
-
-  // 播放消除动画
-  playEliminateAnimation(blockIds) {
-    blockIds.forEach(id => {
-      // 这里添加消除动画效果
-      console.log(`Eliminating block: ${id}`)
-    })
   }
 
   // 方块下落
@@ -144,7 +127,7 @@ class MatchEngine {
     for (let col = 0; col < 8; col++) {
       const columnBlocks = this.gameManager.gameArea.blocks
         .filter(block => block.col === col)
-        .sort((a, b) => b.row - a.row) // 从下往上排序
+        .sort((a, b) => b.row - a.row)
       
       let targetRow = 0
       columnBlocks.forEach(block => {
@@ -162,7 +145,6 @@ class MatchEngine {
       const columnBlocks = this.gameManager.gameArea.blocks
         .filter(block => block.col === col).length
       
-      // 从顶部添加新方块
       for (let row = columnBlocks; row < 12; row++) {
         const randomType = types[Math.floor(Math.random() * types.length)]
         this.gameManager.gameArea.blocks.push({
@@ -180,102 +162,48 @@ class MatchEngine {
   calculateScore(matchCount) {
     let baseScore = matchCount * 10
     if (this.combo > 1) {
-      baseScore *= this.combo // 连击加成
+      baseScore *= this.combo
     }
     this.gameManager.score += baseScore
   }
 
   // 高亮方块
   highlightBlock(block) {
-    // UI实现：添加高亮效果
     console.log(`Highlighting block: ${block.id}`)
   }
 
   // 清除选择
   clearSelection() {
     this.selectedBlock = null
-    // UI实现：移除所有高亮效果
   }
 
-  // 使用道具
-  usePowerup(type, targetRow, targetCol) {
-    switch(type) {
-      case 'pp_bomb':
-        this.usePPBomb(targetRow, targetCol)
-        break
-      case 'cto_laser':
-        this.useCTOLaser(targetRow, targetCol)
-        break
-      case 'ro_wave':
-        this.useROWave()
-        break
-    }
-  }
-
-  // PP棉炸弹道具
-  usePPBomb(row, col) {
+  // 使用PP棉炸弹
+  usePPCottonBomb(centerRow, centerCol) {
     const blocksToRemove = []
     
-    // 清除一个3x3区域
-    for (let r = row - 1; r <= row + 1; r++) {
-      for (let c = col - 1; c <= col + 1; c++) {
-        const block = this.getBlockAt(r, c)
-        if (block) {
+    for (let row = centerRow - 1; row <= centerRow + 1; row++) {
+      for (let col = centerCol - 1; col <= centerCol + 1; col++) {
+        const block = this.getBlockAt(row, col)
+        if (block && block.type === 'particle') {
           blocksToRemove.push(block.id)
         }
       }
     }
     
     this.removeBlocks(blocksToRemove)
-  }
-
-  // CTO激光道具
-  useCTOLaser(row, col) {
-    const blocksToRemove = []
-    
-    // 清除整行和整列
-    for (let c = 0; c < 8; c++) {
-      const block = this.getBlockAt(row, c)
-      if (block) blocksToRemove.push(block.id)
-    }
-    
-    for (let r = 0; r < 12; r++) {
-      const block = this.getBlockAt(r, col)
-      if (block) blocksToRemove.push(block.id)
-    }
-    
-    this.removeBlocks(blocksToRemove)
-  }
-
-  // RO清洁波道具
-  useROWave() {
-    const blocksToRemove = []
-    
-    // 清除所有同类型的污染物
-    const targetType = this.gameManager.gameArea.blocks[0]?.type
-    if (targetType) {
-      this.gameManager.gameArea.blocks.forEach(block => {
-        if (block.type === targetType) {
-          blocksToRemove.push(block.id)
-        }
-      })
-    }
-    
-    this.removeBlocks(blocksToRemove)
+    this.gameManager.score += blocksToRemove.length * 15
   }
 
   // 移除指定方块
   removeBlocks(blockIds) {
-    this.playEliminateAnimation(blockIds)
     this.gameManager.gameArea.blocks = this.gameManager.gameArea.blocks.filter(
       block => !blockIds.includes(block.id)
     )
     
-    // 延迟掉落填充
     setTimeout(() => {
       this.dropBlocks()
       this.fillEmptySpaces()
-    }, 300)
+    }, 200)
   }
 }
 

@@ -12,7 +12,6 @@ class PollutantBlock {
     this.selected = false
     this.eliminating = false
     
-    // 根据类型设置属性
     this.setTypeProperties()
   }
 
@@ -20,21 +19,21 @@ class PollutantBlock {
   setTypeProperties() {
     switch(this.type) {
       case 'particle':
-        this.color = '#8B4513' // 棕色
+        this.color = '#8B4513'
         this.hardness = 'easy'
         this.description = '颗粒污染物(铁锈、泥沙)'
         this.filterType = 'PP棉'
         this.eliminateScore = 10
         break
       case 'microbe':
-        this.color = '#228B22' // 绿色
+        this.color = '#228B22'
         this.hardness = 'medium'
         this.description = '微生物(细菌、病毒)'
         this.filterType = 'CTO活性炭'
         this.eliminateScore = 20
         break
       case 'chemical':
-        this.color = '#8A2BE2' // 紫色
+        this.color = '#8A2BE2'
         this.hardness = 'hard'
         this.description = '化学污染物(重金属、农药)'
         this.filterType = 'RO反渗透膜'
@@ -55,16 +54,6 @@ class PollutantBlock {
     this.col = newCol
   }
 
-  // 开始下落动画
-  startFalling() {
-    this.falling = true
-  }
-
-  // 停止下落动画
-  stopFalling() {
-    this.falling = false
-  }
-
   // 选中方块
   select() {
     this.selected = true
@@ -73,11 +62,6 @@ class PollutantBlock {
   // 取消选中
   deselect() {
     this.selected = false
-  }
-
-  // 开始消除动画
-  startEliminating() {
-    this.eliminating = true
   }
 
   // 检查是否可以与其他方块匹配
@@ -109,21 +93,6 @@ class ParticleBlock extends PollutantBlock {
   constructor(row, col) {
     super('particle', row, col)
     this.icon = '/assets/images/particle.png'
-    this.particles = this.generateParticles()
-  }
-
-  generateParticles() {
-    // 生成泥沙、铁锈颗粒的视觉效果
-    const particles = []
-    for (let i = 0; i < 5; i++) {
-      particles.push({
-        x: Math.random() * 30 + 5,
-        y: Math.random() * 30 + 5,
-        size: Math.random() * 3 + 1,
-        opacity: Math.random() * 0.5 + 0.5
-      })
-    }
-    return particles
   }
 }
 
@@ -135,21 +104,6 @@ class MicrobeBlock extends PollutantBlock {
     super('microbe', row, col)
     this.icon = '/assets/images/microbe.png'
     this.animationSpeed = Math.random() * 2 + 1
-    this.microbes = this.generateMicrobes()
-  }
-
-  generateMicrobes() {
-    // 生成细菌、病毒的动画效果
-    const microbes = []
-    for (let i = 0; i < 3; i++) {
-      microbes.push({
-        x: Math.random() * 25 + 5,
-        y: Math.random() * 25 + 5,
-        type: Math.random() > 0.5 ? 'bacteria' : 'virus',
-        animationDelay: Math.random() * 2
-      })
-    }
-    return microbes
   }
 }
 
@@ -160,17 +114,7 @@ class ChemicalBlock extends PollutantBlock {
   constructor(row, col) {
     super('chemical', row, col)
     this.icon = '/assets/images/chemical.png'
-    this.toxicLevel = Math.random() * 0.5 + 0.5 // 毒性等级
-    this.chemicals = this.generateChemicals()
-  }
-
-  generateChemicals() {
-    // 生成重金属、有毒化学物质的视觉效果
-    return {
-      heavyMetals: ['铅', '汞', '镉'][Math.floor(Math.random() * 3)],
-      toxicSymbol: '☠️',
-      dangerLevel: this.toxicLevel > 0.7 ? 'high' : 'medium'
-    }
+    this.toxicLevel = Math.random() * 0.5 + 0.5
   }
 }
 
@@ -194,45 +138,101 @@ class PollutantFactory {
   // 根据关卡生成合适的污染物类型
   static getRandomTypeForLevel(level) {
     if (level <= 5) {
-      // 新手关卡，只有颗粒污染物
       return 'particle'
     } else if (level <= 15) {
-      // 中级关卡，颗粒 + 微生物
       const types = ['particle', 'microbe']
       return types[Math.floor(Math.random() * types.length)]
     } else {
-      // 高级关卡，全部类型
       const types = ['particle', 'microbe', 'chemical']
-      return types[Math.floor(Math.random() * types.length)]
+      const weights = [0.4, 0.35, 0.25]
+      const random = Math.random()
+      
+      if (random < weights[0]) return 'particle'
+      if (random < weights[0] + weights[1]) return 'microbe'
+      return 'chemical'
     }
   }
 
-  // 获取污染物类型说明
-  static getTypeDescription(type) {
-    const descriptions = {
+  // 根据难度调整污染物分布
+  static getTypesForDifficulty(difficulty) {
+    switch(difficulty) {
+      case 'easy':
+        return ['particle']
+      case 'medium':
+        return ['particle', 'microbe']
+      case 'hard':
+        return ['particle', 'microbe', 'chemical']
+      case 'extreme':
+        return ['microbe', 'chemical']
+      default:
+        return ['particle', 'microbe']
+    }
+  }
+
+  // 生成初始方块布局
+  static generateInitialLayout(level, rows = 6, cols = 8) {
+    const blocks = []
+    const availableTypes = this.getTypesForLevel(level)
+    
+    for (let row = 0; row < rows; row++) {
+      for (let col = 0; col < cols; col++) {
+        let type
+        let attempts = 0
+        
+        do {
+          type = availableTypes[Math.floor(Math.random() * availableTypes.length)]
+          attempts++
+        } while (attempts < 10 && this.wouldCreateMatch(blocks, type, row, col))
+        
+        blocks.push(this.createBlock(type, row, col))
+      }
+    }
+    
+    return blocks
+  }
+
+  // 检查是否会创建匹配
+  static wouldCreateMatch(existingBlocks, newType, row, col) {
+    const leftBlocks = existingBlocks.filter(b => 
+      b.row === row && b.col >= col - 2 && b.col < col
+    ).sort((a, b) => a.col - b.col)
+    
+    if (leftBlocks.length >= 2 && 
+        leftBlocks[leftBlocks.length - 1].type === newType &&
+        leftBlocks[leftBlocks.length - 2].type === newType) {
+      return true
+    }
+    
+    return false
+  }
+
+  // 获取污染物类型信息
+  static getTypeInfo(type) {
+    const typeMap = {
       particle: {
         name: '颗粒污染物',
-        examples: ['铁锈', '泥沙', '沙石'],
-        filter: 'PP棉过滤',
-        danger: '低',
+        description: '主要来源于水中的泥沙、铁锈等大颗粒物质',
+        filterMethod: 'PP棉物理过滤',
+        harmLevel: '低',
         color: '#8B4513'
       },
       microbe: {
-        name: '微生物污染',
-        examples: ['细菌', '病毒', '寄生虫'],
-        filter: 'CTO活性炭',
-        danger: '中',
+        name: '微生物污染物',
+        description: '包括细菌、病毒等微生物',
+        filterMethod: 'CTO活性炭吸附',
+        harmLevel: '中',
         color: '#228B22'
       },
       chemical: {
         name: '化学污染物',
-        examples: ['重金属', '农药', '工业污染'],
-        filter: 'RO反渗透膜',
-        danger: '高',
+        description: '重金属、农药残留等有害化学物质',
+        filterMethod: 'RO反渗透膜高精度过滤',
+        harmLevel: '高',
         color: '#8A2BE2'
       }
     }
-    return descriptions[type] || descriptions.particle
+    
+    return typeMap[type] || typeMap.particle
   }
 }
 
