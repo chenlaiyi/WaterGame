@@ -189,6 +189,20 @@ class GameManager {
     // 这里需要根据具体的UI框架实现事件触发
     console.log(`Event triggered: ${eventName}`, data)
   }
+
+  // 处理下落方块逻辑
+  handleFallingBlocks() {
+    // 简化的下落逻辑
+    this.gameArea.blocks.forEach(block => {
+      if (block.falling) {
+        block.row += 0.1 // 下落速度
+        if (block.row >= this.gameArea.height - 1) {
+          block.falling = false
+          block.row = Math.floor(block.row)
+        }
+      }
+    })
+  }
 }
 
 module.exports = GameManager
