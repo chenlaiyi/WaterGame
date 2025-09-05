@@ -201,106 +201,160 @@ page {
   padding: 10rpx;
 }
 
-.game-block {
+.game-cell {
   aspect-ratio: 1;
-  border-radius: 8rpx;
+  background: white;
+  border-radius: 6rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
+  position: relative;
   overflow: hidden;
 }
 
-.game-block:active {
-  transform: scale(0.95);
-}
-
-/* 污染物方块样式 */
-.block-particle {
-  background: linear-gradient(135deg, var(--particle-color) 0%, #a0522d 100%);
-  color: white;
-}
-
-.block-microbe {
-  background: linear-gradient(135deg, var(--microbe-color) 0%, #32cd32 100%);
-  color: white;
-}
-
-.block-chemical {
-  background: linear-gradient(135deg, var(--chemical-color) 0%, #9370db 100%);
-  color: white;
-}
-
-.block-selected {
-  border: 4rpx solid #ffd700;
-  box-shadow: 0 0 20rpx rgba(255, 215, 0, 0.6);
-  transform: scale(1.1);
-}
-
-.block-eliminating {
-  animation: eliminate 0.5s ease-out forwards;
-}
-
-/* =============  状态显示  ============= */
-.status-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20rpx 30rpx;
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 15rpx;
-  margin-bottom: 20rpx;
+.game-cell:hover {
+  transform: scale(1.05);
   box-shadow: 0 4rpx 15rpx var(--shadow);
 }
 
-.status-item {
+.game-cell.selected {
+  border: 4rpx solid var(--primary-color);
+  transform: scale(1.1);
+}
+
+.game-cell.matched {
+  animation: matchPop 0.3s ease;
+}
+
+@keyframes matchPop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+  100% { transform: scale(0); }
+}
+
+/* =============  污染物样式  ============= */
+.pollutant {
+  width: 80%;
+  height: 80%;
+  border-radius: 50%;
   display: flex;
-  flex-direction: column;
   align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 24rpx;
+}
+
+.pollutant.particle {
+  background: linear-gradient(135deg, var(--particle-color) 0%, #cd853f 100%);
+}
+
+.pollutant.microbe {
+  background: linear-gradient(135deg, var(--microbe-color) 0%, #32cd32 100%);
+}
+
+.pollutant.chemical {
+  background: linear-gradient(135deg, var(--chemical-color) 0%, #9370db 100%);
+}
+
+/* =============  得分和状态栏  ============= */
+.score-bar {
+  background: white;
+  border-radius: 50rpx;
+  padding: 20rpx 30rpx;
+  margin: 20rpx 0;
+  box-shadow: 0 4rpx 15rpx var(--shadow);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.score-item {
+  text-align: center;
   flex: 1;
 }
 
-.status-label {
+.score-label {
   font-size: 24rpx;
   color: var(--text-secondary);
   margin-bottom: 8rpx;
 }
 
-.status-value {
-  font-size: 32rpx;
-  font-weight: 600;
-  color: var(--text-primary);
+.score-value {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: var(--primary-color);
 }
 
-.status-value.score {
-  color: var(--success-color);
+/* =============  进度条  ============= */
+.progress-bar {
+  width: 100%;
+  height: 12rpx;
+  background: var(--border-color);
+  border-radius: 6rpx;
+  overflow: hidden;
+  position: relative;
 }
 
-.status-value.time {
-  color: var(--warning-color);
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+  border-radius: 6rpx;
+  transition: width 0.3s ease;
+  position: relative;
 }
 
-.status-value.time.urgent {
-  color: var(--error-color);
-  animation: pulse 1s infinite;
+.progress-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  animation: progressShine 2s infinite;
 }
 
-/* =============  动画效果  ============= */
+@keyframes progressShine {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* =============  模态框和弹窗  ============= */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 20rpx;
+  padding: 40rpx;
+  margin: 40rpx;
+  max-width: 600rpx;
+  animation: slideUp 0.3s ease;
+}
+
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes slideUp {
   from {
     opacity: 0;
-    transform: translateY(50rpx);
+    transform: translateY(100rpx);
   }
   to {
     opacity: 1;
@@ -308,89 +362,267 @@ page {
   }
 }
 
-@keyframes pulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
+/* =============  品牌展示区域  ============= */
+.brand-showcase {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+  color: white;
+  border-radius: 20rpx;
+  padding: 30rpx;
+  margin: 20rpx 0;
+  text-align: center;
 }
 
-@keyframes eliminate {
-  0% {
-    transform: scale(1) rotate(0deg);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.2) rotate(180deg);
-    opacity: 0.5;
-  }
-  100% {
-    transform: scale(0) rotate(360deg);
-    opacity: 0;
-  }
+.brand-logo {
+  font-size: 48rpx;
+  font-weight: bold;
+  margin-bottom: 16rpx;
 }
 
-@keyframes rotate {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.brand-slogan {
+  font-size: 28rpx;
+  opacity: 0.9;
+  margin-bottom: 20rpx;
 }
 
-@keyframes bounce {
-  0%, 20%, 50%, 80%, 100% {
-    transform: translateY(0);
-  }
-  40% {
-    transform: translateY(-10rpx);
-  }
-  60% {
-    transform: translateY(-5rpx);
-  }
+.brand-features {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20rpx;
 }
 
-/* =============  响应式适配  ============= */
-@media (max-width: 400px) {
-  .container {
-    padding: 15rpx;
-  }
-  
-  .modal {
-    margin: 20rpx;
-    padding: 30rpx;
+.brand-feature {
+  text-align: center;
+}
+
+.brand-feature-icon {
+  font-size: 36rpx;
+  margin-bottom: 8rpx;
+}
+
+.brand-feature-text {
+  font-size: 24rpx;
+  opacity: 0.8;
+}
+
+/* =============  列表和表格  ============= */
+.list-item {
+  background: white;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin: 12rpx 0;
+  box-shadow: 0 4rpx 12rpx var(--shadow);
+  transition: all 0.2s ease;
+}
+
+.list-item:active {
+  transform: scale(0.98);
+  box-shadow: 0 2rpx 8rpx var(--shadow);
+}
+
+.list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12rpx;
+}
+
+.list-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.list-subtitle {
+  font-size: 28rpx;
+  color: var(--text-secondary);
+}
+
+.list-badge {
+  background: var(--primary-color);
+  color: white;
+  padding: 4rpx 12rpx;
+  border-radius: 20rpx;
+  font-size: 24rpx;
+}
+
+/* =============  输入框组件  ============= */
+.input-group {
+  margin: 20rpx 0;
+}
+
+.input-label {
+  display: block;
+  margin-bottom: 12rpx;
+  font-size: 28rpx;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.input-field {
+  width: 100%;
+  padding: 24rpx;
+  border: 2rpx solid var(--border-color);
+  border-radius: 12rpx;
+  font-size: 32rpx;
+  transition: all 0.2s ease;
+}
+
+.input-field:focus {
+  border-color: var(--primary-color);
+  outline: none;
+  box-shadow: 0 0 0 6rpx rgba(18, 150, 219, 0.1);
+}
+
+/* =============  徽章和标签  ============= */
+.badge {
+  display: inline-block;
+  padding: 6rpx 16rpx;
+  border-radius: 20rpx;
+  font-size: 24rpx;
+  font-weight: 500;
+}
+
+.badge-primary {
+  background: var(--primary-color);
+  color: white;
+}
+
+.badge-success {
+  background: var(--success-color);
+  color: white;
+}
+
+.badge-warning {
+  background: var(--warning-color);
+  color: white;
+}
+
+.badge-danger {
+  background: var(--error-color);
+  color: white;
+}
+
+/* =============  响应式设计  ============= */
+@media screen and (max-width: 768rpx) {
+  .game-grid {
+    grid-gap: 3rpx;
+    padding: 8rpx;
   }
   
   .btn {
     padding: 20rpx 40rpx;
-    font-size: 30rpx;
+    font-size: 28rpx;
+  }
+  
+  .card {
+    padding: 24rpx;
+    margin: 16rpx 0;
   }
 }
 
-/* =============  工具类  ============= */
-.text-center { text-align: center; }
-.text-left { text-align: left; }
-.text-right { text-align: right; }
+/* =============  动画效果  ============= */
+.bounce {
+  animation: bounce 0.6s ease;
+}
 
-.mt-10 { margin-top: 10rpx; }
-.mt-20 { margin-top: 20rpx; }
-.mt-30 { margin-top: 30rpx; }
-.mb-10 { margin-bottom: 10rpx; }
-.mb-20 { margin-bottom: 20rpx; }
-.mb-30 { margin-bottom: 30rpx; }
+@keyframes bounce {
+  0%, 20%, 60%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-20rpx);
+  }
+  80% {
+    transform: translateY(-10rpx);
+  }
+}
 
-.p-10 { padding: 10rpx; }
-.p-20 { padding: 20rpx; }
-.p-30 { padding: 30rpx; }
+.shake {
+  animation: shake 0.5s ease;
+}
 
-.w-100 { width: 100%; }
-.h-100 { height: 100%; }
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-10rpx); }
+  20%, 40%, 60%, 80% { transform: translateX(10rpx); }
+}
 
-.opacity-50 { opacity: 0.5; }
-.opacity-80 { opacity: 0.8; }
+.pulse {
+  animation: pulse 1s infinite;
+}
 
-.hidden { display: none !important; }
-.visible { display: block !important; }
+@keyframes pulse {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* =============  辅助工具类  ============= */
+.hidden {
+  display: none !important;
+}
+
+.invisible {
+  visibility: hidden;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.font-bold {
+  font-weight: bold;
+}
+
+.font-normal {
+  font-weight: normal;
+}
+
+.mb-0 { margin-bottom: 0; }
+.mb-1 { margin-bottom: 8rpx; }
+.mb-2 { margin-bottom: 16rpx; }
+.mb-3 { margin-bottom: 24rpx; }
+.mb-4 { margin-bottom: 32rpx; }
+
+.mt-0 { margin-top: 0; }
+.mt-1 { margin-top: 8rpx; }
+.mt-2 { margin-top: 16rpx; }
+.mt-3 { margin-top: 24rpx; }
+.mt-4 { margin-top: 32rpx; }
+
+.p-0 { padding: 0; }
+.p-1 { padding: 8rpx; }
+.p-2 { padding: 16rpx; }
+.p-3 { padding: 24rpx; }
+.p-4 { padding: 32rpx; }
+
+/* =============  主题色变量补充  ============= */
+.bg-primary { background-color: var(--primary-color); }
+.bg-success { background-color: var(--success-color); }
+.bg-warning { background-color: var(--warning-color); }
+.bg-danger { background-color: var(--error-color); }
+.bg-light { background-color: var(--bg-light); }
+
+.text-primary { color: var(--primary-color); }
+.text-success { color: var(--success-color); }
+.text-warning { color: var(--warning-color); }
+.text-danger { color: var(--error-color); }
+.text-secondary { color: var(--text-secondary); }
+.text-muted { color: var(--text-disabled); }
