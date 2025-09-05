@@ -1,0 +1,95 @@
+<!-- pages/game/game.wxml -->
+<view class="container game-page">
+  <!-- 游戏状态栏 -->
+  <view class="status-bar">
+    <view class="status-item">
+      <text class="status-label">关卡</text>
+      <text class="status-value">{{level}}</text>
+    </view>
+    <view class="status-item">
+      <text class="status-label">得分</text>
+      <text class="status-value score">{{score}}</text>
+    </view>
+    <view class="status-item">
+      <text class="status-label">时间</text>
+      <text class="status-value time {{timeLeft < 60 ? 'urgent' : ''}}">{{timeLeft}}s</text>
+    </view>
+    <view class="status-item">
+      <text class="status-label">生命</text>
+      <text class="status-value">{{lives}}</text>
+    </view>
+  </view>
+
+  <!-- 连击显示 -->
+  <view class="combo-display" wx:if="{{combo > 1}}">
+    <text class="combo-text">{{combo}} 连击!</text>
+  </view>
+
+  <!-- 游戏区域 -->
+  <view class="game-area">
+    <view class="game-grid">
+      <view 
+        class="game-block block-{{block.type}} {{block.selected ? 'block-selected' : ''}} {{block.eliminating ? 'block-eliminating' : ''}}"
+        wx:for="{{blocks}}" 
+        wx:key="id"
+        data-id="{{block.id}}"
+        bindtap="onBlockTap"
+      >
+        <!-- 污染物图标 -->
+      </view>
+    </view>
+  </view>
+
+  <!-- 道具栏 -->
+  <view class="powerup-bar">
+    <view class="powerup-item" bindtap="usePPCottonBomb">
+      <view class="powerup-icon">💣</view>
+      <text class="powerup-count">{{powerUps.ppCotton}}</text>
+      <text class="powerup-name">PP棉炸弹</text>
+    </view>
+    <view class="powerup-item" bindtap="useCTOLaser">
+      <view class="powerup-icon">镭射</view>
+      <text class="powerup-count">{{powerUps.ctoLaser}}</text>
+      <text class="powerup-name">CTO激光</text>
+    </view>
+    <view class="powerup-item" bindtap="useROWave">
+      <view class="powerup-icon">🌊</view>
+      <text class="powerup-count">{{powerUps.roWave}}</text>
+      <text class="powerup-name">RO清洁波</text>
+    </view>
+  </view>
+
+  <!-- 功能按钮 -->
+  <view class="action-buttons">
+    <button class="btn btn-outline" bindtap="pauseGame">暂停</button>
+    <button class="btn btn-primary" bindtap="onShowSmartControl">5G控制</button>
+    <button class="btn btn-success" bindtap="onShowWaterTest">水质检测</button>
+  </view>
+
+  <!-- 暂停弹窗 -->
+  <view class="modal-overlay" wx:if="{{gameStatus === 'paused'}}">
+    <view class="modal pause-modal">
+      <view class="modal-title">游戏暂停</view>
+      <view class="modal-actions">
+        <button class="btn btn-outline" bindtap="resumeGame">继续游戏</button>
+        <button class="btn btn-primary" bindtap="restartGame">重新开始</button>
+        <button class="btn btn-danger" bindtap="wx.navigateBack">退出游戏</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 游戏结束弹窗 -->
+  <view class="modal-overlay" wx:if="{{gameStatus === 'gameOver'}}">
+    <view class="modal gameover-modal">
+      <view class="modal-title">游戏结束</view>
+      <view class="gameover-content">
+        <view class="final-score">最终得分: {{score}}</view>
+        <view class="level-completed">完成关卡: {{level}}</view>
+      </view>
+      <view class="modal-actions">
+        <button class="btn btn-primary" bindtap="restartGame">重新开始</button>
+        <button class="btn btn-outline" bindtap="wx.navigateBack">返回首页</button>
+      </view>
+    </view>
+  </view>
+</view>

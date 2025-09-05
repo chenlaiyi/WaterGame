@@ -2,6 +2,8 @@
  * 污染物消除匹配引擎
  * 处理三消逻辑、方块移动、连击计算等
  */
+const logger = require('./Logger.js');
+
 class MatchEngine {
   constructor(gameManager) {
     this.gameManager = gameManager
@@ -11,24 +13,39 @@ class MatchEngine {
 
   // 处理方块点击
   handleBlockTap(blockId) {
-    const block = this.findBlockById(blockId)
-    if (!block) return
-
-    if (!this.selectedBlock) {
-      this.selectedBlock = block
-      this.highlightBlock(block)
-    } else {
-      if (this.isAdjacent(this.selectedBlock, block)) {
-        this.swapBlocks(this.selectedBlock, block)
-        this.checkAndClearMatches()
+    try {
+      const block = this.findBlockById(blockId)
+      if (!block) {
+        logger.warn(`Block not found: ${blockId}`);
+        return;
       }
-      this.clearSelection()
+
+      if (!this.selectedBlock) {
+        this.selectedBlock = block
+        this.highlightBlock(block)
+      } else {
+        if (this.isAdjacent(this.selectedBlock, block)) {
+          this.swapBlocks(this.selectedBlock, block)
+          this.checkAndClearMatches()
+        }
+        this.clearSelection()
+      }
+    } catch (error) {
+      logger.error("Error handling block tap", error, { blockId });
     }
   }
 
-  // 查找方块
+  // 查找方块 - 优化版本，使用Map提高查找效率
   findBlockById(id) {
-    return this.gameManager.gameArea.blocks.find(block => block.id === id)
+    // 如果有缓存的Map，使用它来提高查找效率
+    if (!this._blockMap) {
+      this._blockMap = new Map();
+      this.gameManager.gameArea.blocks.forEach(block => {
+        this._blockMap.set(block.id, block);
+      });
+    }
+    
+    return this._blockMap.get(id);
   }
 
   // 检查两个方块是否相邻
@@ -100,11 +117,16 @@ class MatchEngine {
     return matches
   }
 
-  // 获取指定位置的方块
+  // 获取指定位置的方块 - 优化版本
   getBlockAt(row, col) {
-    return this.gameManager.gameArea.blocks.find(block => 
-      block.row === row && block.col === col
-    )
+    // 使用for循环替代find方法，提高性能
+    for (let i = 0; i < this.gameManager.gameArea.blocks.length; i++) {
+      const block = this.gameManager.gameArea.blocks[i];
+      if (block.row === row && block.col === col) {
+        return block;
+      }
+    }
+    return null;
   }
 
   // 清除匹配的方块
@@ -169,12 +191,19 @@ class MatchEngine {
 
   // 高亮方块
   highlightBlock(block) {
-    console.log(`Highlighting block: ${block.id}`)
+    try {
+      logger.debug(`Highlighting block: ${block.id}`);
+      console.log(`Highlighting block: ${block.id}`);
+    } catch (error) {
+      logger.error(`Error highlighting block: ${block.id}`, error);
+    }
   }
 
   // 清除选择
   clearSelection() {
-    this.selectedBlock = null
+    this.selectedBlock = null;
+    // 清除缓存以确保下次查找的准确性
+    this._blockMap = null;
   }
 
   // 使用PP棉炸弹

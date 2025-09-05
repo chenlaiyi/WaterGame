@@ -2,6 +2,8 @@
  * 游戏核心管理器
  * 负责游戏状态管理、场景切换、分数计算等核心功能
  */
+const logger = require('./Logger.js');
+
 class GameManager {
   constructor() {
     this.gameState = 'menu' // menu, playing, paused, gameOver
@@ -186,22 +188,36 @@ class GameManager {
 
   // 事件触发器（需要具体实现绑定到UI）
   triggerEvent(eventName, data = {}) {
-    // 这里需要根据具体的UI框架实现事件触发
-    console.log(`Event triggered: ${eventName}`, data)
+    try {
+      // 这里需要根据具体的UI框架实现事件触发
+      logger.debug(`Event triggered: ${eventName}`, data);
+      console.log(`Event triggered: ${eventName}`, data);
+    } catch (error) {
+      logger.error(`Failed to trigger event: ${eventName}`, error, data);
+    }
   }
 
-  // 处理下落方块逻辑
+  // 处理下落方块逻辑 - 优化版本
   handleFallingBlocks() {
-    // 简化的下落逻辑
-    this.gameArea.blocks.forEach(block => {
+    // 使用更高效的下落逻辑，减少不必要的计算
+    let hasFallingBlocks = false;
+    
+    for (let i = 0; i < this.gameArea.blocks.length; i++) {
+      const block = this.gameArea.blocks[i];
       if (block.falling) {
-        block.row += 0.1 // 下落速度
+        hasFallingBlocks = true;
+        block.row += 0.1; // 下落速度
+        
+        // 优化：提前终止条件检查
         if (block.row >= this.gameArea.height - 1) {
-          block.falling = false
-          block.row = Math.floor(block.row)
+          block.falling = false;
+          block.row = Math.floor(block.row);
         }
       }
-    })
+    }
+    
+    // 如果没有下落方块，可以跳过一些计算
+    return hasFallingBlocks;
   }
 }
 

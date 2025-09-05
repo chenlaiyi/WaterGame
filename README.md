@@ -224,8 +224,8 @@ cd WaterGame
 
 ---
 
-**游戏官网**: [点点够净水器官网](https://diandougou.com)  
-**技术支持**: chenlaiyi@example.com  
-**商务合作**: business@diandougou.com
+**游戏官网**: [点点够净水器官网](https://www.itapgo.com)  
+**技术支持**: chenlaiyi@tapgo.cn  
+**商务合作**: business@tapgo.cn
 
 *让每一滴水都纯净，让每一次游戏都有意义。*
