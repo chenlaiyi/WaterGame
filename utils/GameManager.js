@@ -1,23 +1,19 @@
-/**
- * 游戏核心管理器
- * 负责游戏状态管理、场景切换、分数计算等核心功能
- */
 const logger = require('./Logger.js');
 
 class GameManager {
   constructor() {
-    this.gameState = 'menu' // menu, playing, paused, gameOver
-    this.currentLevel = 1
-    this.score = 0
-    this.lives = 3
-    this.timeLeft = 300 // 5分钟倒计时
+    this.gameState = 'menu';
+    this.currentLevel = 1;
+    this.score = 0;
+    this.lives = 3;
+    this.timeLeft = 300;
     this.gameArea = {
       width: 8,
       height: 12,
       blocks: []
-    }
-    this.reviveUsed = 0
-    this.maxRevive = 2
+    };
+    this.reviveUsed = 0;
+    this.maxRevive = 2;
   }
 
   // 初始化游戏
@@ -189,7 +185,6 @@ class GameManager {
   // 事件触发器（需要具体实现绑定到UI）
   triggerEvent(eventName, data = {}) {
     try {
-      // 这里需要根据具体的UI框架实现事件触发
       logger.debug(`Event triggered: ${eventName}`, data);
       console.log(`Event triggered: ${eventName}`, data);
     } catch (error) {

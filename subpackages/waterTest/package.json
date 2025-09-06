@@ -1,0 +1,16 @@
+{
+  "name": "water-test-subpackage",
+  "version": "1.0.0",
+  "description": "水质检测分包",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "water",
+    "test",
+    "subpackage"
+  ],
+  "author": "点点够技术团队",
+  "license": "MIT"
+}

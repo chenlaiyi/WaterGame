@@ -1,245 +1,185 @@
-/**
- * 污染物方块组件
- * 定义三种不同类型的污染物及其属性
- */
-class PollutantBlock {
-  constructor(type, row, col) {
-    this.id = `${Date.now()}-${row}-${col}`
-    this.type = type
-    this.row = row
-    this.col = col
-    this.falling = false
-    this.selected = false
-    this.eliminating = false
-    
-    this.setTypeProperties()
-  }
+const logger = require('./Logger.js');
 
-  // 设置类型属性
-  setTypeProperties() {
-    switch(this.type) {
-      case 'particle':
-        this.color = '#8B4513'
-        this.hardness = 'easy'
-        this.description = '颗粒污染物(铁锈、泥沙)'
-        this.filterType = 'PP棉'
-        this.eliminateScore = 10
-        break
-      case 'microbe':
-        this.color = '#228B22'
-        this.hardness = 'medium'
-        this.description = '微生物(细菌、病毒)'
-        this.filterType = 'CTO活性炭'
-        this.eliminateScore = 20
-        break
-      case 'chemical':
-        this.color = '#8A2BE2'
-        this.hardness = 'hard'
-        this.description = '化学污染物(重金属、农药)'
-        this.filterType = 'RO反渗透膜'
-        this.eliminateScore = 30
-        break
-      default:
-        this.color = '#666666'
-        this.hardness = 'medium'
-        this.description = '未知污染物'
-        this.filterType = '通用过滤'
-        this.eliminateScore = 15
-    }
-  }
-
-  // 移动方块
-  move(newRow, newCol) {
-    this.row = newRow
-    this.col = newCol
-  }
-
-  // 选中方块
-  select() {
-    this.selected = true
-  }
-
-  // 取消选中
-  deselect() {
-    this.selected = false
-  }
-
-  // 检查是否可以与其他方块匹配
-  canMatchWith(otherBlock) {
-    return this.type === otherBlock.type
-  }
-
-  // 获取方块的视觉表现数据
-  getDisplayData() {
-    return {
-      id: this.id,
-      type: this.type,
-      row: this.row,
-      col: this.col,
-      color: this.color,
-      falling: this.falling,
-      selected: this.selected,
-      eliminating: this.eliminating,
-      description: this.description,
-      filterType: this.filterType
-    }
-  }
-}
-
-/**
- * 颗粒污染物方块
- */
-class ParticleBlock extends PollutantBlock {
-  constructor(row, col) {
-    super('particle', row, col)
-    this.icon = '/assets/images/particle.png'
-  }
-}
-
-/**
- * 微生物污染物方块
- */
-class MicrobeBlock extends PollutantBlock {
-  constructor(row, col) {
-    super('microbe', row, col)
-    this.icon = '/assets/images/microbe.png'
-    this.animationSpeed = Math.random() * 2 + 1
-  }
-}
-
-/**
- * 化学污染物方块
- */
-class ChemicalBlock extends PollutantBlock {
-  constructor(row, col) {
-    super('chemical', row, col)
-    this.icon = '/assets/images/chemical.png'
-    this.toxicLevel = Math.random() * 0.5 + 0.5
-  }
-}
-
-/**
- * 污染物工厂类
- */
-class PollutantFactory {
-  static createBlock(type, row, col) {
-    switch(type) {
-      case 'particle':
-        return new ParticleBlock(row, col)
-      case 'microbe':
-        return new MicrobeBlock(row, col)
-      case 'chemical':
-        return new ChemicalBlock(row, col)
-      default:
-        return new PollutantBlock(type, row, col)
-    }
-  }
-
-  // 根据关卡生成合适的污染物类型
-  static getRandomTypeForLevel(level) {
-    if (level <= 5) {
-      return 'particle'
-    } else if (level <= 15) {
-      const types = ['particle', 'microbe']
-      return types[Math.floor(Math.random() * types.length)]
-    } else {
-      const types = ['particle', 'microbe', 'chemical']
-      const weights = [0.4, 0.35, 0.25]
-      const random = Math.random()
-      
-      if (random < weights[0]) return 'particle'
-      if (random < weights[0] + weights[1]) return 'microbe'
-      return 'chemical'
-    }
-  }
-
-  // 根据难度调整污染物分布
-  static getTypesForDifficulty(difficulty) {
-    switch(difficulty) {
-      case 'easy':
-        return ['particle']
-      case 'medium':
-        return ['particle', 'microbe']
-      case 'hard':
-        return ['particle', 'microbe', 'chemical']
-      case 'extreme':
-        return ['microbe', 'chemical']
-      default:
-        return ['particle', 'microbe']
-    }
-  }
-
-  // 生成初始方块布局
-  static generateInitialLayout(level, rows = 6, cols = 8) {
-    const blocks = []
-    const availableTypes = this.getTypesForLevel(level)
-    
-    for (let row = 0; row < rows; row++) {
-      for (let col = 0; col < cols; col++) {
-        let type
-        let attempts = 0
-        
-        do {
-          type = availableTypes[Math.floor(Math.random() * availableTypes.length)]
-          attempts++
-        } while (attempts < 10 && this.wouldCreateMatch(blocks, type, row, col))
-        
-        blocks.push(this.createBlock(type, row, col))
-      }
-    }
-    
-    return blocks
-  }
-
-  // 检查是否会创建匹配
-  static wouldCreateMatch(existingBlocks, newType, row, col) {
-    const leftBlocks = existingBlocks.filter(b => 
-      b.row === row && b.col >= col - 2 && b.col < col
-    ).sort((a, b) => a.col - b.col)
-    
-    if (leftBlocks.length >= 2 && 
-        leftBlocks[leftBlocks.length - 1].type === newType &&
-        leftBlocks[leftBlocks.length - 2].type === newType) {
-      return true
-    }
-    
-    return false
-  }
-
-  // 获取污染物类型信息
-  static getTypeInfo(type) {
-    const typeMap = {
+class PollutantBlocks {
+  constructor() {
+    // 定义污染物类型
+    this.blockTypes = {
       particle: {
+        id: 'particle',
         name: '颗粒污染物',
-        description: '主要来源于水中的泥沙、铁锈等大颗粒物质',
-        filterMethod: 'PP棉物理过滤',
-        harmLevel: '低',
-        color: '#8B4513'
+        description: '代表泥沙、铁锈等大颗粒杂质',
+        color: '#8B4513', // 棕色
+        difficulty: 1,
+        scoreMultiplier: 1,
+        removableBy: ['ppCotton']
       },
       microbe: {
-        name: '微生物污染物',
-        description: '包括细菌、病毒等微生物',
-        filterMethod: 'CTO活性炭吸附',
-        harmLevel: '中',
-        color: '#228B22'
+        id: 'microbe',
+        name: '微生物',
+        description: '代表细菌、病毒等微生物',
+        color: '#32CD32', // 绿色
+        difficulty: 2,
+        scoreMultiplier: 1.5,
+        removableBy: ['ctoLaser']
       },
       chemical: {
+        id: 'chemical',
         name: '化学污染物',
-        description: '重金属、农药残留等有害化学物质',
-        filterMethod: 'RO反渗透膜高精度过滤',
-        harmLevel: '高',
-        color: '#8A2BE2'
+        description: '代表重金属、农药等化学污染物',
+        color: '#9370DB', // 紫色
+        difficulty: 3,
+        scoreMultiplier: 2,
+        removableBy: ['roWave']
       }
+    };
+    
+    // 定义特殊方块类型
+    this.specialBlocks = {
+      ppCottonBomb: {
+        id: 'ppCottonBomb',
+        name: 'PP棉炸弹',
+        description: '清除3x3区域内的颗粒污染物',
+        color: '#D2691E',
+        effect: 'clear3x3Particle'
+      },
+      ctoLaser: {
+        id: 'ctoLaser',
+        name: 'CTO激光',
+        description: '清除整行或整列的微生物',
+        color: '#228B22',
+        effect: 'clearLineMicrobe'
+      },
+      roWave: {
+        id: 'roWave',
+        name: 'RO清洁波',
+        description: '清除全屏指定类型的污染物',
+        color: '#8A2BE2',
+        effect: 'clearAllOfType'
+      }
+    };
+  }
+
+  // 获取所有污染物类型
+  getAllBlockTypes() {
+    return { ...this.blockTypes };
+  }
+
+  // 根据ID获取污染物信息
+  getBlockTypeById(id) {
+    return this.blockTypes[id] || null;
+  }
+
+  // 获取特殊方块信息
+  getSpecialBlockById(id) {
+    return this.specialBlocks[id] || null;
+  }
+
+  // 根据关卡获取可用的污染物类型
+  getAvailableBlockTypesForLevel(level) {
+    if (level <= 5) {
+      return ['particle']; // 只有颗粒污染物
+    } else if (level <= 15) {
+      return ['particle', 'microbe']; // 颗粒 + 微生物
+    } else {
+      return ['particle', 'microbe', 'chemical']; // 全部类型
+    }
+  }
+
+  // 生成指定类型的污染物方块
+  generateBlock(type, row, col) {
+    const blockType = this.blockTypes[type];
+    if (!blockType) {
+      logger.warn(`未知的污染物类型: ${type}`);
+      return null;
     }
     
-    return typeMap[type] || typeMap.particle
+    return {
+      id: `${type}-${Date.now()}-${row}-${col}`,
+      type: type,
+      name: blockType.name,
+      row: row,
+      col: col,
+      color: blockType.color,
+      difficulty: blockType.difficulty,
+      scoreMultiplier: blockType.scoreMultiplier,
+      falling: false
+    };
+  }
+
+  // 生成特殊方块
+  generateSpecialBlock(type, row, col) {
+    const specialBlock = this.specialBlocks[type];
+    if (!specialBlock) {
+      logger.warn(`未知的特殊方块类型: ${type}`);
+      return null;
+    }
+    
+    return {
+      id: `${type}-${Date.now()}-${row}-${col}`,
+      type: type,
+      name: specialBlock.name,
+      row: row,
+      col: col,
+      color: specialBlock.color,
+      effect: specialBlock.effect,
+      isSpecial: true,
+      falling: false
+    };
+  }
+
+  // 获取污染物的分数
+  getBlockScore(block, baseScore = 10) {
+    if (block.isSpecial) {
+      // 特殊方块有固定分数
+      return baseScore * 5;
+    }
+    
+    const blockType = this.blockTypes[block.type];
+    if (blockType) {
+      return baseScore * blockType.scoreMultiplier;
+    }
+    
+    return baseScore;
+  }
+
+  // 检查两个方块是否可以匹配消除
+  canMatch(block1, block2) {
+    // 普通方块类型相同可以匹配
+    if (!block1.isSpecial && !block2.isSpecial) {
+      return block1.type === block2.type;
+    }
+    
+    // 特殊方块可以与任何方块匹配
+    return true;
+  }
+
+  // 获取特殊方块效果描述
+  getSpecialBlockEffectDescription(effectType) {
+    switch (effectType) {
+      case 'clear3x3Particle':
+        return '清除3x3区域内的颗粒污染物';
+      case 'clearLineMicrobe':
+        return '清除整行或整列的微生物';
+      case 'clearAllOfType':
+        return '清除全屏指定类型的污染物';
+      default:
+        return '特殊效果';
+    }
+  }
+
+  // 根据难度获取提示信息
+  getDifficultyTip(difficulty) {
+    switch (difficulty) {
+      case 1:
+        return '简单：颗粒污染物，最容易清除';
+      case 2:
+        return '中等：微生物，需要特殊道具';
+      case 3:
+        return '困难：化学污染物，最难清除';
+      default:
+        return '未知难度';
+    }
   }
 }
 
-module.exports = {
-  PollutantBlock,
-  ParticleBlock,
-  MicrobeBlock,
-  ChemicalBlock,
-  PollutantFactory
-}
+module.exports = PollutantBlocks;

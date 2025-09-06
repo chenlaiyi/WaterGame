@@ -1,0 +1,152 @@
+<!-- pages/waterTest/waterTest.wxml -->
+<view class="container">
+  <view class="header">
+    <text class="title">水质检测实验室</text>
+    <text class="subtitle">通过多种检测方式了解水质状况</text>
+  </view>
+
+  <!-- 测试类型选择 -->
+  <view class="test-tabs">
+    <view class="tab {{activeTest === 'tds' ? 'active' : ''}}" data-test="tds" bindtap="onTestChange">
+      <text>TDS检测</text>
+    </view>
+    <view class="tab {{activeTest === 'chlorine' ? 'active' : ''}}" data-test="chlorine" bindtap="onTestChange">
+      <text>余氯检测</text>
+    </view>
+    <view class="tab {{activeTest === 'ph' ? 'active' : ''}}" data-test="ph" bindtap="onTestChange">
+      <text>PH检测</text>
+    </view>
+    <view class="tab {{activeTest === 'minerals' ? 'active' : ''}}" data-test="minerals" bindtap="onTestChange">
+      <text>矿物质</text>
+    </view>
+    <view class="tab {{activeTest === 'electrolysis' ? 'active' : ''}}" data-test="electrolysis" bindtap="onTestChange">
+      <text>电解实验</text>
+    </view>
+  </view>
+
+  <!-- TDS检测 -->
+  <view class="test-content" wx:if="{{activeTest === 'tds'}}">
+    <view class="test-title">TDS检测笔</view>
+    <view class="tds-meter">
+      <view class="meter-display">
+        <text class="value">{{testResults.tds.value}}</text>
+        <text class="unit">ppm</text>
+      </view>
+      <view class="quality-indicator" style="color: {{testResults.tds.color}};">
+        {{testResults.tds.quality}}
+      </view>
+    </view>
+    <view class="description">
+      <text>TDS（Total Dissolved Solids）表示水中溶解性总固体含量，数值越低表示水质越纯净。</text>
+    </view>
+    <button class="action-btn" bindtap="onTDSStart">开始检测</button>
+    <view class="status">{{testCompleted.tds ? '已完成' : '未完成'}}</view>
+  </view>
+
+  <!-- 余氯检测 -->
+  <view class="test-content" wx:if="{{activeTest === 'chlorine'}}">
+    <view class="test-title">余氯检测试剂</view>
+    <view class="chlorine-test">
+      <view class="water-sample">
+        <view class="bubbles">
+          <view class="bubble" wx:for="{{testResults.chlorine.bubbles}}" wx:key="index"></view>
+        </view>
+        <text class="water-text">水样</text>
+      </view>
+      <view class="reagent">
+        <button class="add-btn" bindtap="onChlorineAdd">滴入试剂</button>
+      </view>
+    </view>
+    <view class="result" wx:if="{{testResults.chlorine.quality}}">
+      <text>检测结果：{{testResults.chlorine.quality}}</text>
+    </view>
+    <view class="description">
+      <text>余氯是自来水厂用于杀菌消毒的化学物质，适量的余氯可以保证水质安全，但过高会对人体健康产生影响。</text>
+    </view>
+    <view class="status">{{testCompleted.chlorine ? '已完成' : '未完成'}}</view>
+  </view>
+
+  <!-- PH检测 -->
+  <view class="test-content" wx:if="{{activeTest === 'ph'}}">
+    <view class="test-title">PH值检测</view>
+    <view class="ph-test">
+      <view class="ph-meter">
+        <view class="ph-value" style="color: {{testResults.ph.color}};">
+          {{testResults.ph.value}}
+        </view>
+        <view class="ph-scale">
+          <view class="scale-item acid">酸性</view>
+          <view class="scale-item neutral">中性</view>
+          <view class="scale-item alkaline">碱性</view>
+        </view>
+      </view>
+      <view class="ph-paper">
+        <view class="paper-color" style="background-color: {{testResults.ph.color}};"></view>
+        <text>PH试纸</text>
+      </view>
+    </view>
+    <view class="description">
+      <text>PH值表示水的酸碱度，7为中性，小于7为酸性，大于7为碱性。人体适宜的饮用水PH值在6.5-8.5之间。</text>
+    </view>
+    <button class="action-btn" bindtap="onPHTest">开始测试</button>
+    <view class="status">{{testCompleted.ph ? '已完成' : '未完成'}}</view>
+  </view>
+
+  <!-- 矿物质检测 -->
+  <view class="test-content" wx:if="{{activeTest === 'minerals'}}">
+    <view class="test-title">矿物质检测</view>
+    <view class="minerals-test">
+      <view class="mineral-container">
+        <view class="mineral" wx:for="{{testResults.minerals.collected}}" wx:key="index">+</view>
+      </view>
+      <view class="collect-area">
+        <button class="collect-btn" bindtap="onCollectMineral">收集矿物质</button>
+      </view>
+      <view class="progress">
+        <text>收集进度：{{testResults.minerals.collected}}/{{testResults.minerals.target}}</text>
+      </view>
+    </view>
+    <view class="description">
+      <text>适量的矿物质对人体有益，但过量摄入会对健康产生影响。通过检测了解水中矿物质含量是否适中。</text>
+    </view>
+    <view class="status">{{testCompleted.minerals ? '已完成' : '未完成'}}</view>
+  </view>
+
+  <!-- 电解实验 -->
+  <view class="test-content" wx:if="{{activeTest === 'electrolysis'}}">
+    <view class="test-title">电解实验</view>
+    <view class="electrolysis-test">
+      <view class="electrode">
+        <view class="electrode-top"></view>
+        <view class="electrode-bottom"></view>
+      </view>
+      <view class="water-container">
+        <view class="water-level"></view>
+        <view class="bubbles-stage-{{testResults.electrolysis.stage}}"></view>
+      </view>
+      <view class="progress-bar">
+        <view class="progress-fill" style="width: {{testResults.electrolysis.progress}}%"></view>
+      </view>
+    </view>
+    <view class="description">
+      <text>电解实验通过电解反应展示水质差异。纯净水导电性差，产生的气泡较少；含有杂质的水导电性强，会产生大量气泡。</text>
+    </view>
+    <button class="action-btn" bindtap="onElectrolysisStart">开始实验</button>
+    <view class="status">{{testCompleted.electrolysis ? '已完成' : '未完成'}}</view>
+  </view>
+
+  <!-- 测试结果 -->
+  <view class="result-modal" wx:if="{{showResult}}">
+    <view class="result-content">
+      <view class="result-title">检测完成！</view>
+      <view class="reward">
+        <text>恭喜您完成所有水质检测</text>
+        <text class="coins">+{{rewardCoins}} 金币</text>
+      </view>
+      <view class="actions">
+        <button class="share-btn" bindtap="onShareResults">分享成绩</button>
+        <button class="back-btn" bindtap="onBackToGame">返回游戏</button>
+      </view>
+    </view>
+  </view>
+</view>

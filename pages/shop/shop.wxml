@@ -1,0 +1,103 @@
+<!-- pages/shop/shop.wxml -->
+<view class="container">
+  <!-- 顶部导航 -->
+  <view class="header">
+    <text class="title">点点够商城</text>
+    <view class="user-info" wx:if="{{userInfo}}">
+      <image class="avatar" src="{{userInfo.avatarUrl}}" mode="aspectFill"></image>
+      <text class="nickname">{{userInfo.nickName}}</text>
+      <text class="coins">金币: {{app.globalData.userGameData.coins}}</text>
+    </view>
+  </view>
+
+  <!-- 标签页 -->
+  <view class="tabs">
+    <view class="tab {{activeTab === 'products' ? 'active' : ''}}" data-tab="products" bindtap="onTabChange">
+      <text>产品</text>
+    </view>
+    <view class="tab {{activeTab === 'coupons' ? 'active' : ''}}" data-tab="coupons" bindtap="onTabChange">
+      <text>优惠券</text>
+    </view>
+    <view class="tab {{activeTab === 'knowledge' ? 'active' : ''}}" data-tab="knowledge" bindtap="onTabChange">
+      <text>知识</text>
+    </view>
+  </view>
+
+  <!-- 产品列表 -->
+  <scroll-view class="content" scroll-y wx:if="{{activeTab === 'products'}}">
+    <view class="section-title">
+      <text>热销产品</text>
+    </view>
+    
+    <view class="product-list">
+      <view class="product-item" wx:for="{{products}}" wx:key="id" data-product="{{item}}" bindtap="onViewProduct">
+        <image class="product-image" src="{{item.image}}" mode="aspectFill"></image>
+        <view class="product-info">
+          <view class="product-name">{{item.name}}</view>
+          <view class="product-tags">
+            <text class="tag" wx:for="{{item.tags}}" wx:key="index">{{item}}</text>
+          </view>
+          <view class="product-price">
+            <text class="price">¥{{item.price}}</text>
+            <text class="original-price">¥{{item.originalPrice}}</text>
+          </view>
+          <view class="product-sales">已售{{item.sales}}件</view>
+        </view>
+        <button class="share-btn" data-product="{{item}}" bindtap="onShareProduct">分享</button>
+      </view>
+    </view>
+    
+    <!-- 品牌信息 -->
+    <view class="brand-section">
+      <view class="section-title">
+        <text>品牌信息</text>
+      </view>
+      <view class="brand-info">
+        <button class="info-btn" bindtap="onViewBrandStory">品牌故事</button>
+        <button class="info-btn" bindtap="onViewProductFeatures">产品优势</button>
+        <button class="info-btn" bindtap="onViewCostComparison">成本对比</button>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 优惠券列表 -->
+  <scroll-view class="content" scroll-y wx:if="{{activeTab === 'coupons'}}">
+    <view class="section-title">
+      <text>优惠券</text>
+    </view>
+    
+    <view class="coupon-list">
+      <view class="coupon-item" wx:for="{{coupons}}" wx:key="id">
+        <view class="coupon-left">
+          <view class="coupon-amount">¥{{item.discount}}</view>
+          <view class="coupon-condition">{{item.condition}}</view>
+        </view>
+        <view class="coupon-right">
+          <view class="coupon-name">{{item.name}}</view>
+          <view class="coupon-validity">有效期至: {{item.validity}}</view>
+          <view class="coupon-type">{{item.type}}</view>
+        </view>
+        <button class="claim-btn" data-coupon="{{item}}" bindtap="onClaimCoupon">立即领取</button>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 知识列表 -->
+  <scroll-view class="content" scroll-y wx:if="{{activeTab === 'knowledge'}}">
+    <view class="section-title">
+      <text>水质知识</text>
+    </view>
+    
+    <view class="knowledge-list">
+      <view class="knowledge-item" wx:for="{{knowledge}}" wx:key="index" data-knowledge="{{item}}" bindtap="onViewKnowledge">
+        <view class="knowledge-title">{{item.title}}</view>
+        <view class="knowledge-content">{{item.content}}</view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 客服按钮 -->
+  <view class="footer">
+    <button class="support-btn" bindtap="onContactSupport">联系客服</button>
+  </view>
+</view>

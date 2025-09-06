@@ -1,0 +1,567 @@
+/* pages/waterTest/waterTest.wxss */
+.container {
+  padding: 20rpx;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 30rpx;
+}
+
+.title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+  display: block;
+  margin-bottom: 10rpx;
+}
+
+.subtitle {
+  font-size: 28rpx;
+  color: #666;
+}
+
+.test-tabs {
+  display: flex;
+  background-color: #fff;
+  border-radius: 10rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0,0,0,0.1);
+}
+
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 20rpx 0;
+  font-size: 28rpx;
+  color: #666;
+  border-right: 1rpx solid #eee;
+}
+
+.tab:last-child {
+  border-right: none;
+}
+
+.tab.active {
+  color: #1296db;
+  font-weight: bold;
+  border-bottom: 4rpx solid #1296db;
+}
+
+.test-content {
+  background-color: #fff;
+  border-radius: 10rpx;
+  padding: 30rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0,0,0,0.1);
+}
+
+.test-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+  margin-bottom: 30rpx;
+}
+
+/* TDS检测样式 */
+.tds-meter {
+  text-align: center;
+  margin-bottom: 30rpx;
+}
+
+.meter-display {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  margin-bottom: 20rpx;
+}
+
+.value {
+  font-size: 80rpx;
+  font-weight: bold;
+  color: #1296db;
+}
+
+.unit {
+  font-size: 32rpx;
+  color: #666;
+  margin-left: 10rpx;
+}
+
+.quality-indicator {
+  font-size: 36rpx;
+  font-weight: bold;
+}
+
+/* 余氯检测样式 */
+.chlorine-test {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30rpx;
+}
+
+.water-sample {
+  width: 45%;
+  text-align: center;
+}
+
+.bubbles {
+  height: 200rpx;
+  background-color: #4fc3f7;
+  border-radius: 10rpx;
+  position: relative;
+  margin-bottom: 20rpx;
+  overflow: hidden;
+}
+
+.bubble {
+  position: absolute;
+  width: 20rpx;
+  height: 20rpx;
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+  bottom: 10rpx;
+  animation: bubble-rise 3s infinite;
+}
+
+@keyframes bubble-rise {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-180rpx);
+    opacity: 0;
+  }
+}
+
+.water-text {
+  font-size: 28rpx;
+  color: #333;
+}
+
+.reagent {
+  width: 45%;
+  text-align: center;
+}
+
+.add-btn {
+  background-color: #1296db;
+  color: #fff;
+  border: none;
+  padding: 20rpx 30rpx;
+  border-radius: 10rpx;
+  font-size: 28rpx;
+}
+
+/* PH检测样式 */
+.ph-test {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30rpx;
+}
+
+.ph-meter {
+  width: 60%;
+  text-align: center;
+}
+
+.ph-value {
+  font-size: 80rpx;
+  font-weight: bold;
+  margin-bottom: 20rpx;
+}
+
+.ph-scale {
+  display: flex;
+  justify-content: space-between;
+}
+
+.scale-item {
+  font-size: 24rpx;
+  color: #666;
+}
+
+.scale-item.acid {
+  color: #f44336;
+}
+
+.scale-item.neutral {
+  color: #4caf50;
+}
+
+.scale-item.alkaline {
+  color: #2196f7;
+}
+
+.ph-paper {
+  width: 30%;
+  text-align: center;
+}
+
+.paper-color {
+  width: 100rpx;
+  height: 150rpx;
+  margin: 0 auto 20rpx;
+  border: 2rpx solid #ddd;
+  border-radius: 10rpx;
+}
+
+/* 矿物质检测样式 */
+.minerals-test {
+  text-align: center;
+}
+
+.mineral-container {
+  height: 200rpx;
+  background-color: #e0f7fa;
+  border-radius: 10rpx;
+  margin-bottom: 30rpx;
+  position: relative;
+  overflow: hidden;
+}
+
+.mineral {
+  position: absolute;
+  font-size: 36rpx;
+  color: #009688;
+  animation: mineral-float 5s infinite;
+}
+
+@keyframes mineral-float {
+  0% {
+    transform: translateY(0) translateX(0);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-180rpx) translateX(20rpx);
+    opacity: 0;
+  }
+}
+
+.collect-btn {
+  background-color: #009688;
+  color: #fff;
+  border: none;
+  padding: 20rpx 40rpx;
+  border-radius: 10rpx;
+  font-size: 28rpx;
+  margin-bottom: 20rpx;
+}
+
+.progress {
+  font-size: 28rpx;
+  color: #666;
+}
+
+/* 电解实验样式 */
+.electrolysis-test {
+  text-align: center;
+}
+
+.electrode {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30rpx;
+}
+
+.electrode-top, .electrode-bottom {
+  width: 60rpx;
+  height: 20rpx;
+  background-color: #333;
+  margin: 0 50rpx;
+}
+
+.electrode-top {
+  margin-bottom: 20rpx;
+}
+
+.water-container {
+  width: 80%;
+  height: 200rpx;
+  background-color: #4fc3f7;
+  border-radius: 10rpx;
+  margin: 0 auto 30rpx;
+  position: relative;
+  overflow: hidden;
+}
+
+.bubbles-stage-0 {
+  display: none;
+}
+
+.bubbles-stage-1 {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.bubbles-stage-1::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10rpx;
+  height: 10rpx;
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.bubbles-stage-2 {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.bubbles-stage-2::before,
+.bubbles-stage-2::after {
+  content: "";
+  position: absolute;
+  width: 10rpx;
+  height: 10rpx;
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+}
+
+.bubbles-stage-2::before {
+  top: 30%;
+  left: 30%;
+}
+
+.bubbles-stage-2::after {
+  top: 70%;
+  left: 70%;
+}
+
+.bubbles-stage-3 {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.bubbles-stage-3::before,
+.bubbles-stage-3::after,
+.bubbles-stage-3 .bubble-3 {
+  content: "";
+  position: absolute;
+  width: 10rpx;
+  height: 10rpx;
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+}
+
+.bubbles-stage-3::before {
+  top: 20%;
+  left: 20%;
+}
+
+.bubbles-stage-3::after {
+  top: 80%;
+  left: 80%;
+}
+
+.bubbles-stage-3 .bubble-3 {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.bubbles-stage-4 {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.bubbles-stage-4::before,
+.bubbles-stage-4::after,
+.bubbles-stage-4 .bubble-4-1,
+.bubbles-stage-4 .bubble-4-2 {
+  content: "";
+  position: absolute;
+  width: 10rpx;
+  height: 10rpx;
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+}
+
+.bubbles-stage-4::before {
+  top: 15%;
+  left: 15%;
+}
+
+.bubbles-stage-4::after {
+  top: 85%;
+  left: 85%;
+}
+
+.bubbles-stage-4 .bubble-4-1 {
+  top: 40%;
+  left: 30%;
+}
+
+.bubbles-stage-4 .bubble-4-2 {
+  top: 60%;
+  left: 70%;
+}
+
+.bubbles-stage-5 {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.bubbles-stage-5::before,
+.bubbles-stage-5::after,
+.bubbles-stage-5 .bubble-5-1,
+.bubbles-stage-5 .bubble-5-2,
+.bubbles-stage-5 .bubble-5-3 {
+  content: "";
+  position: absolute;
+  width: 10rpx;
+  height: 10rpx;
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+}
+
+.bubbles-stage-5::before {
+  top: 10%;
+  left: 10%;
+}
+
+.bubbles-stage-5::after {
+  top: 90%;
+  left: 90%;
+}
+
+.bubbles-stage-5 .bubble-5-1 {
+  top: 30%;
+  left: 20%;
+}
+
+.bubbles-stage-5 .bubble-5-2 {
+  top: 70%;
+  left: 80%;
+}
+
+.bubbles-stage-5 .bubble-5-3 {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.progress-bar {
+  width: 80%;
+  height: 20rpx;
+  background-color: #eee;
+  border-radius: 10rpx;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: #1296db;
+  transition: width 0.3s;
+}
+
+/* 通用样式 */
+.description {
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.5;
+  margin-bottom: 30rpx;
+  text-align: justify;
+}
+
+.action-btn {
+  background-color: #1296db;
+  color: #fff;
+  border: none;
+  padding: 20rpx;
+  border-radius: 10rpx;
+  font-size: 28rpx;
+  margin-bottom: 20rpx;
+  width: 100%;
+}
+
+.status {
+  text-align: center;
+  font-size: 28rpx;
+  color: #999;
+}
+
+/* 结果弹窗 */
+.result-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.result-content {
+  background-color: #fff;
+  width: 80%;
+  border-radius: 20rpx;
+  padding: 40rpx;
+  text-align: center;
+}
+
+.result-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 30rpx;
+}
+
+.reward {
+  margin-bottom: 40rpx;
+}
+
+.reward text {
+  display: block;
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 10rpx;
+}
+
+.coins {
+  font-size: 40rpx !important;
+  font-weight: bold;
+  color: #ff9800 !important;
+}
+
+.share-btn, .back-btn {
+  width: 80%;
+  margin: 15rpx auto;
+  padding: 20rpx;
+  border-radius: 10rpx;
+  font-size: 28rpx;
+}
+
+.share-btn {
+  background-color: #1296db;
+  color: #fff;
+  border: none;
+}
+
+.back-btn {
+  background-color: #fff;
+  color: #1296db;
+  border: 2rpx solid #1296db;
+}

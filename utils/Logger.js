@@ -29,11 +29,6 @@ class Logger {
     }
   }
 
-  /**
-   * 记录信息日志
-   * @param {string} message - 日志消息
-   * @param {object} data - 附加数据
-   */
   info(message, data = null) {
     if (this.shouldLog('info')) {
       console.info(`[INFO] ${message}`, data);
@@ -41,11 +36,6 @@ class Logger {
     }
   }
 
-  /**
-   * 记录警告日志
-   * @param {string} message - 日志消息
-   * @param {object} data - 附加数据
-   */
   warn(message, data = null) {
     if (this.shouldLog('warn')) {
       console.warn(`[WARN] ${message}`, data);
@@ -53,12 +43,6 @@ class Logger {
     }
   }
 
-  /**
-   * 记录错误日志
-   * @param {string} message - 日志消息
-   * @param {object} error - 错误对象
-   * @param {object} data - 附加数据
-   */
   error(message, error = null, data = null) {
     if (this.shouldLog('error')) {
       console.error(`[ERROR] ${message}`, error, data);
@@ -71,11 +55,6 @@ class Logger {
     }
   }
 
-  /**
-   * 判断是否应该记录指定级别的日志
-   * @param {string} level - 日志级别
-   * @returns {boolean} 是否应该记录
-   */
   shouldLog(level) {
     const levels = ['debug', 'info', 'warn', 'error'];
     const currentLevelIndex = levels.indexOf(this.logLevel);
@@ -84,12 +63,6 @@ class Logger {
     return targetLevelIndex >= currentLevelIndex;
   }
 
-  /**
-   * 写入日志到本地存储
-   * @param {string} level - 日志级别
-   * @param {string} message - 日志消息
-   * @param {object} data - 附加数据
-   */
   writeToLog(level, message, data) {
     try {
       // 获取当前时间
@@ -127,12 +100,6 @@ class Logger {
     }
   }
 
-  /**
-   * 发送错误到服务器
-   * @param {string} message - 错误消息
-   * @param {object} error - 错误对象
-   * @param {object} data - 附加数据
-   */
   sendErrorToServer(message, error, data) {
     try {
       // 构造错误报告
@@ -173,9 +140,6 @@ class Logger {
     }
   }
 
-  /**
-   * 清除错误日志
-   */
   clearErrorLogs() {
     try {
       if (typeof wx !== 'undefined') {
@@ -186,10 +150,6 @@ class Logger {
     }
   }
 
-  /**
-   * 获取本地存储的日志
-   * @returns {array} 日志数组
-   */
   getLocalLogs() {
     try {
       if (typeof wx !== 'undefined') {

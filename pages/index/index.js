@@ -272,6 +272,27 @@ Page({
     })
   },
 
+  // 跳转到商城
+  onGoToShop() {
+    wx.navigateTo({
+      url: '/pages/shop/shop'
+    })
+  },
+
+  // 跳转到排行榜
+  onGoToRank() {
+    wx.navigateTo({
+      url: '/pages/rank/rank'
+    })
+  },
+
+  // 跳转到水质检测
+  onGoToWaterTest() {
+    wx.navigateTo({
+      url: '/pages/waterTest/waterTest'
+    })
+  },
+
   // 阻止事件冒泡
   stopPropagation() {
     // 空函数，用于阻止事件冒泡

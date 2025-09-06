@@ -1,244 +1,231 @@
-/**
- * 品牌营销管理器
- * 处理品牌宣传、用户教育、营销功能
- */
+const logger = require('./Logger.js');
+
 class BrandMarketingManager {
   constructor() {
     this.brandInfo = {
       name: '点点够',
-      slogan: 'RO反渗透 · 980元用2年',
-      coreValues: ['健康', '经济', '智能', '环保'],
-      productHighlights: [
-        { title: 'RO反渗透技术', desc: '0.0001微米精密过滤，去除99.9%有害物质' },
-        { title: '超值性价比', desc: '980元即可享受2年纯净好水' },
-        { title: '5G智能控制', desc: '远程监控，实时掌握水质状况' },
-        { title: '三级精密过滤', desc: 'PP棉+CTO活性炭+RO膜组合过滤' }
+      slogan: '让每一滴水都纯净',
+      description: '专注净水领域，为您提供安全、健康、便捷的净水解决方案',
+      features: [
+        {
+          title: 'RO反渗透技术',
+          description: '有效去除水中99%以上的细菌、病毒、重金属等有害物质'
+        },
+        {
+          title: '980元2年',
+          description: '超高性价比，两年仅需980元，平均每天1.34元'
+        },
+        {
+          title: '5G智能控制',
+          description: '实时监控水质，远程控制设备，智能提醒滤芯更换'
+        }
       ]
-    }
-
-    this.educationContent = {
-      waterKnowledge: [
-        {
-          id: 'knowledge_001',
-          title: '你知道吗？自来水的二次污染',
-          content: '虽然自来水厂出水符合饮用标准，但在输送到家庭的管道过程中，容易受到管道老化、二次供水设施污染等影响，产生铁锈、细菌等有害物质。',
-          icon: '💧',
-          category: '水质安全'
-        },
-        {
-          id: 'knowledge_002', 
-          title: 'TDS值越低越好吗？',
-          content: 'TDS代表总溶解固体，包括有害物质和有益矿物质。理想的饮用水TDS应在30-150之间，既去除了有害物质，又保留了人体所需的矿物质。',
-          icon: '🔬',
-          category: '检测知识'
-        },
-        {
-          id: 'knowledge_003',
-          title: 'RO反渗透技术原理',
-          content: 'RO膜孔径仅0.0001微米，相当于头发丝的百万分之一，能有效去除细菌、病毒、重金属、农药残留等有害物质，是目前最先进的净水技术。',
-          icon: '⚗️',
-          category: '技术原理'
-        }
-      ],
-      tips: [
-        '每天喝8杯纯净水，健康生活从点点够开始',
-        '定期检测水质，关爱家人健康',
-        '选择净水器，就是选择家庭健康保障',
-        '智能提醒换芯，让净水更省心',
-        '环保从我做起，拒绝塑料瓶装水'
-      ]
-    }
-
-    this.marketingCampaigns = {
-      welcomeGift: {
-        title: '新用户专享',
-        description: '注册即送100金币+3个道具',
-        rewards: { coins: 100, powerups: { pp_cotton: 1, cto_laser: 1, ro_wave: 1 } },
-        claimed: false
-      },
-      shareReward: {
-        title: '分享有礼',
-        description: '每日分享获得额外奖励',
-        dailyLimit: 3,
-        rewards: { coins: 20, powerups: 1 }
-      },
-      levelReward: {
-        title: '通关奖励',
-        description: '每通过5关解锁品牌知识+丰厚奖励',
-        milestones: [5, 10, 15, 20, 25, 30]
-      }
-    }
-
-    this.userEngagement = {
-      visitDays: 0,
-      totalPlayTime: 0,
-      knowledgeUnlocked: [],
-      achievementsEarned: [],
-      brandInteractions: 0
-    }
-
-    this.loadUserData()
-  }
-
-  // 加载用户数据
-  loadUserData() {
-    try {
-      const savedData = wx.getStorageSync('brandMarketingData')
-      if (savedData) {
-        this.userEngagement = { ...this.userEngagement, ...savedData }
-      }
-    } catch (error) {
-      console.log('加载品牌营销数据失败:', error)
-    }
-  }
-
-  // 保存用户数据
-  saveUserData() {
-    try {
-      wx.setStorageSync('brandMarketingData', this.userEngagement)
-    } catch (error) {
-      console.log('保存品牌营销数据失败:', error)
-    }
-  }
-
-  // 展示品牌介绍
-  showBrandIntroduction() {
-    return {
-      title: '认识点点够净水器',
-      content: {
-        brand: this.brandInfo,
-        introduction: `${this.brandInfo.name}专注于为中国家庭提供安全、经济、智能的净水解决方案。`,
-        advantages: [
-          '🔬 RO反渗透技术：去除99.9%有害物质',
-          '💰 超值性价比：980元享受2年纯净好水',  
-          '📱 5G智能控制：随时随地掌控水质',
-          '🌱 环保节能：减少塑料瓶装水消耗',
-          '🛡️ 品质保障：专业团队7x24服务'
-        ],
-        callToAction: '了解更多产品信息'
-      }
-    }
-  }
-
-  // 获取每日知识
-  getDailyKnowledge() {
-    const today = new Date().getDate()
-    const knowledgeIndex = today % this.educationContent.waterKnowledge.length
-    const knowledge = this.educationContent.waterKnowledge[knowledgeIndex]
+    };
     
-    if (!this.userEngagement.knowledgeUnlocked.includes(knowledge.id)) {
-      this.userEngagement.knowledgeUnlocked.push(knowledge.id)
-      this.saveUserData()
-    }
-    
-    return knowledge
-  }
-
-  // 获取通关知识奖励
-  getLevelKnowledge(level) {
-    const milestoneIndex = this.marketingCampaigns.levelReward.milestones.findIndex(m => m === level)
-    if (milestoneIndex !== -1 && milestoneIndex < this.educationContent.waterKnowledge.length) {
-      const knowledge = this.educationContent.waterKnowledge[milestoneIndex]
-      
-      if (!this.userEngagement.knowledgeUnlocked.includes(knowledge.id)) {
-        this.userEngagement.knowledgeUnlocked.push(knowledge.id)
-        this.saveUserData()
-        
-        return {
-          unlocked: true,
-          knowledge: knowledge,
-          reward: { coins: 50, achievement: `水质专家 Level ${milestoneIndex + 1}` }
-        }
-      }
-    }
-    
-    return { unlocked: false }
-  }
-
-  // 处理分享奖励
-  handleShareReward() {
-    const today = new Date().toDateString()
-    const shareKey = `share_${today}`
-    
-    try {
-      const todayShares = wx.getStorageSync(shareKey) || 0
-      
-      if (todayShares < this.marketingCampaigns.shareReward.dailyLimit) {
-        wx.setStorageSync(shareKey, todayShares + 1)
-        
-        return {
-          success: true,
-          reward: this.marketingCampaigns.shareReward.rewards,
-          remaining: this.marketingCampaigns.shareReward.dailyLimit - todayShares - 1,
-          message: '分享成功！获得奖励'
-        }
-      } else {
-        return {
-          success: false,
-          message: '今日分享次数已达上限',
-          nextResetTime: '明日重置'
-        }
-      }
-    } catch (error) {
-      return { success: false, message: '分享失败，请重试' }
-    }
-  }
-
-  // 显示产品对比
-  showProductComparison() {
-    return {
-      title: '为什么选择点点够？',
-      comparison: {
-        traditional: {
-          name: '传统净水方式',
-          items: [
-            { feature: '过滤精度', value: '粗过滤', status: 'poor' },
-            { feature: '使用成本', value: '持续购买滤芯', status: 'poor' },
-            { feature: '智能功能', value: '无', status: 'poor' }
-          ]
-        },
-        diandougou: {
-          name: '点点够净水器',
-          items: [
-            { feature: '过滤精度', value: '0.0001微米RO膜', status: 'excellent' },
-            { feature: '使用成本', value: '980元用2年', status: 'excellent' },
-            { feature: '智能功能', value: '5G远程控制', status: 'excellent' }
-          ]
-        }
-      },
+    this.productInfo = {
+      modelName: 'DDG-RO501',
+      price: 980,
+      servicePeriod: '2年',
       highlights: [
-        '💧 每杯水成本仅0.13元，比瓶装水便宜90%',
-        '🏆 RO反渗透技术，NASA同款过滤标准',
-        '📱 手机一键控制，科技改变生活',
-        '🌍 年均减少1200个塑料瓶，守护地球'
+        'RO反渗透技术，过滤精度0.0001微米',
+        '五级精滤，层层保障水质安全',
+        '智能滤芯提醒，及时更换不担心',
+        '静音设计，工作噪音低于40分贝',
+        '节能环保，制水率高达50%以上'
       ]
-    }
-  }
-
-  // 记录品牌互动
-  recordBrandInteraction(type) {
-    this.userEngagement.brandInteractions++
-    this.userEngagement.lastInteraction = {
-      type: type,
-      timestamp: Date.now()
-    }
-    this.saveUserData()
-  }
-
-  // 获取品牌营销统计
-  getMarketingStats() {
-    return {
-      totalInteractions: this.userEngagement.brandInteractions,
-      knowledgeProgress: {
-        unlocked: this.userEngagement.knowledgeUnlocked.length,
-        total: this.educationContent.waterKnowledge.length,
-        percentage: Math.round((this.userEngagement.knowledgeUnlocked.length / this.educationContent.waterKnowledge.length) * 100)
+    };
+    
+    this.waterKnowledge = [
+      {
+        title: '管道二次污染',
+        content: '自来水在输送过程中，由于管道老化、水箱二次供水等原因，容易产生二次污染，影响水质安全。'
       },
-      achievements: this.userEngagement.achievementsEarned,
-      playTime: this.userEngagement.totalPlayTime,
-      visitDays: this.userEngagement.visitDays
+      {
+        title: '净水器必要性',
+        content: '安装净水器可以有效去除水中的余氯、细菌、重金属等有害物质，保障家庭饮水安全。'
+      },
+      {
+        title: 'TDS值含义',
+        content: 'TDS（Total Dissolved Solids）表示水中溶解性总固体含量，数值越低表示水质越纯净。'
+      },
+      {
+        title: '滤芯更换',
+        content: '不同类型的滤芯有不同的使用寿命，及时更换滤芯是保证净水效果的关键。'
+      }
+    ];
+    
+    this.costComparison = {
+      bottledWater: {
+        name: '瓶装水',
+        annualCost: 1800, // 按每天1.5L，每瓶2元计算
+        disadvantages: ['塑料污染', '运输不便', '成本高昂']
+      },
+      traditional: {
+        name: '传统净水器',
+        annualCost: 600, // 滤芯更换费用
+        disadvantages: ['缺乏智能监控', '滤芯更换不及时', '维护复杂']
+      },
+      ddg: {
+        name: '点点够净水器',
+        annualCost: 490, // 980元2年
+        advantages: ['智能监控', '滤芯智能提醒', '高性价比', '专业服务']
+      }
+    };
+  }
+
+  // 获取品牌信息
+  getBrandInfo() {
+    return { ...this.brandInfo };
+  }
+
+  // 获取产品信息
+  getProductInfo() {
+    return { ...this.productInfo };
+  }
+
+  // 获取水质知识
+  getWaterKnowledge() {
+    return [...this.waterKnowledge];
+  }
+
+  // 获取指定ID的水质知识
+  getWaterKnowledgeById(id) {
+    return this.waterKnowledge[id] || null;
+  }
+
+  // 获取成本对比信息
+  getCostComparison() {
+    return { ...this.costComparison };
+  }
+
+  // 显示品牌故事弹窗
+  showBrandStory() {
+    const brandInfo = this.getBrandInfo();
+    
+    wx.showModal({
+      title: brandInfo.name,
+      content: `${brandInfo.slogan}\n\n${brandInfo.description}`,
+      showCancel: false,
+      confirmText: '了解更多'
+    });
+  }
+
+  // 显示产品优势
+  showProductFeatures() {
+    const productInfo = this.getProductInfo();
+    const features = productInfo.highlights.join('\n');
+    
+    wx.showModal({
+      title: `${productInfo.modelName} 产品优势`,
+      content: features,
+      showCancel: false
+    });
+  }
+
+  // 显示成本对比
+  showCostComparison() {
+    const comparison = this.getCostComparison();
+    const content = `
+${comparison.bottledWater.name}: 年费用${comparison.bottledWater.annualCost}元
+劣势: ${comparison.bottledWater.disadvantages.join(', ')}
+
+${comparison.traditional.name}: 年费用${comparison.traditional.annualCost}元
+劣势: ${comparison.traditional.disadvantages.join(', ')}
+
+${comparison.ddg.name}: 年费用${comparison.ddg.annualCost}元
+优势: ${comparison.ddg.advantages.join(', ')}
+    `;
+    
+    wx.showModal({
+      title: '成本对比分析',
+      content: content,
+      showCancel: false
+    });
+  }
+
+  // 显示水质知识
+  showWaterKnowledge() {
+    const knowledgeList = this.getWaterKnowledge();
+    const items = knowledgeList.map(item => item.title);
+    
+    wx.showActionSheet({
+      itemList: items,
+      success: (res) => {
+        const selectedKnowledge = knowledgeList[res.tapIndex];
+        wx.showModal({
+          title: selectedKnowledge.title,
+          content: selectedKnowledge.content,
+          showCancel: false
+        });
+      }
+    });
+  }
+
+  // 记录品牌曝光
+  trackBrandExposure(event) {
+    try {
+      // 记录品牌曝光事件
+      logger.info('品牌曝光', { event });
+      
+      // 这里可以集成微信统计或其他分析工具
+      if (wx.reportAnalytics) {
+        wx.reportAnalytics('brand_exposure', {
+          event: event,
+          timestamp: Date.now()
+        });
+      }
+    } catch (error) {
+      logger.error('记录品牌曝光失败', error);
     }
+  }
+
+  // 记录用户互动
+  trackUserInteraction(action) {
+    try {
+      // 记录用户互动事件
+      logger.info('用户互动', { action });
+      
+      // 这里可以集成微信统计或其他分析工具
+      if (wx.reportAnalytics) {
+        wx.reportAnalytics('user_interaction', {
+          action: action,
+          timestamp: Date.now()
+        });
+      }
+    } catch (error) {
+      logger.error('记录用户互动失败', error);
+    }
+  }
+
+  // 获取营销活动信息
+  getMarketingCampaigns() {
+    // 当前可参与的营销活动
+    return [
+      {
+        id: 'new_user_discount',
+        title: '新用户专享',
+        description: '首次购买立减100元',
+        valid: true
+      },
+      {
+        id: 'refer_friend',
+        title: '推荐有礼',
+        description: '推荐好友购买双方各得50元优惠券',
+        valid: true
+      }
+    ];
+  }
+
+  // 分享营销内容
+  shareMarketingContent() {
+    const brandInfo = this.getBrandInfo();
+    
+    wx.shareAppMessage({
+      title: `${brandInfo.name} - ${brandInfo.slogan}`,
+      desc: brandInfo.description,
+      path: '/pages/index/index'
+    });
   }
 }
 
-module.exports = BrandMarketingManager
+module.exports = BrandMarketingManager;

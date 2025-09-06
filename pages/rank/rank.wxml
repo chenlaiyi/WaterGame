@@ -1,0 +1,88 @@
+<!-- pages/rank/rank.wxml -->
+<view class="container">
+  <!-- 顶部信息 -->
+  <view class="header">
+    <text class="title">排行榜</text>
+    <view class="user-info" wx:if="{{userInfo}}">
+      <image class="avatar" src="{{userInfo.avatarUrl}}" mode="aspectFill"></image>
+      <view class="user-details">
+        <text class="nickname">{{userInfo.nickName}}</text>
+        <view class="user-rank">
+          <text>分数排名: {{userRank.score}}</text>
+          <text>等级排名: {{userRank.level}}</text>
+          <text>金币排名: {{userRank.coins}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 排行榜标签页 -->
+  <view class="tabs">
+    <view class="tab {{activeTab === 'score' ? 'active' : ''}}" data-tab="score" bindtap="onTabChange">
+      <text>分数榜</text>
+    </view>
+    <view class="tab {{activeTab === 'level' ? 'active' : ''}}" data-tab="level" bindtap="onTabChange">
+      <text>等级榜</text>
+    </view>
+    <view class="tab {{activeTab === 'coins' ? 'active' : ''}}" data-tab="coins" bindtap="onTabChange">
+      <text>金币榜</text>
+    </view>
+  </view>
+
+  <!-- 分数排行榜 -->
+  <scroll-view class="rank-content" scroll-y wx:if="{{activeTab === 'score'}}">
+    <view class="rank-list">
+      <view class="rank-item {{item.rank <= 3 ? 'top-three' : ''}}" wx:for="{{scoreRank}}" wx:key="rank">
+        <view class="rank-number {{item.rank <= 3 ? 'top-rank' : ''}}">
+          <text wx:if="{{item.rank <= 3}}" class="medal medal-{{item.rank}}">{{item.rank}}</text>
+          <text wx:else>{{item.rank}}</text>
+        </view>
+        <image class="user-avatar" src="{{item.avatar}}" mode="aspectFill"></image>
+        <view class="user-info">
+          <text class="user-nickname">{{item.nickname}}</text>
+          <text class="user-score">{{item.score}} 分</text>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 等级排行榜 -->
+  <scroll-view class="rank-content" scroll-y wx:if="{{activeTab === 'level'}}">
+    <view class="rank-list">
+      <view class="rank-item {{item.rank <= 3 ? 'top-three' : ''}}" wx:for="{{levelRank}}" wx:key="rank">
+        <view class="rank-number {{item.rank <= 3 ? 'top-rank' : ''}}">
+          <text wx:if="{{item.rank <= 3}}" class="medal medal-{{item.rank}}">{{item.rank}}</text>
+          <text wx:else>{{item.rank}}</text>
+        </view>
+        <image class="user-avatar" src="{{item.avatar}}" mode="aspectFill"></image>
+        <view class="user-info">
+          <text class="user-nickname">{{item.nickname}}</text>
+          <text class="user-level">{{item.level}} 级</text>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 金币排行榜 -->
+  <scroll-view class="rank-content" scroll-y wx:if="{{activeTab === 'coins'}}">
+    <view class="rank-list">
+      <view class="rank-item {{item.rank <= 3 ? 'top-three' : ''}}" wx:for="{{coinsRank}}" wx:key="rank">
+        <view class="rank-number {{item.rank <= 3 ? 'top-rank' : ''}}">
+          <text wx:if="{{item.rank <= 3}}" class="medal medal-{{item.rank}}">{{item.rank}}</text>
+          <text wx:else>{{item.rank}}</text>
+        </view>
+        <image class="user-avatar" src="{{item.avatar}}" mode="aspectFill"></image>
+        <view class="user-info">
+          <text class="user-nickname">{{item.nickname}}</text>
+          <text class="user-coins">{{item.coins}} 金币</text>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 操作按钮 -->
+  <view class="actions">
+    <button class="action-btn" bindtap="onShareRank">分享排行榜</button>
+    <button class="action-btn" bindtap="onInviteFriends">邀请好友</button>
+  </view>
+</view>

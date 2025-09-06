@@ -56,16 +56,13 @@
 ```
 GameManager.js - 游戏状态管理、关卡控制
 MatchEngine.js - 消消乐匹配逻辑、连击计算
-PollutantBlocks.js - 污染物方块定义和工厂类
 ```
 
 #### 系统功能模块
 ```
 ReviveRewardManager.js - 复活奖励系统
 SmartControlManager.js - 5G智能控制模拟
-BrandMarketingManager.js - 品牌营销功能
 WechatGameAdapter.js - 微信小游戏API适配
-GameOptimizer.js - 性能优化和测试
 ```
 
 #### UI界面模块

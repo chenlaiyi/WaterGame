@@ -1,0 +1,36 @@
+{
+  "name": "water-game",
+  "version": "1.0.0",
+  "description": "点点够净水消消乐 - 寓教于乐的水质安全教育微信小游戏",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "wechat-devtools --auto-port",
+    "build": "npm run build:weapp",
+    "deploy": "./deploy_game_backend.sh",
+    "deploy:vue": "./deploy_vue_components.sh"
+  },
+  "keywords": [
+    "wechat",
+    "minigame",
+    "water",
+    "education",
+    "match3"
+  ],
+  "author": "点点够技术团队",
+  "license": "MIT",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.1"
+  },
+  "devDependencies": {
+    "miniprogram-api-typings": "^3.4.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/water-game.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-org/water-game/issues"
+  },
+  "homepage": "https://github.com/your-org/water-game#readme"
+}

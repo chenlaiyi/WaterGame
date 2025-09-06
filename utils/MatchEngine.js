@@ -1,14 +1,10 @@
-/**
- * 污染物消除匹配引擎
- * 处理三消逻辑、方块移动、连击计算等
- */
 const logger = require('./Logger.js');
 
 class MatchEngine {
   constructor(gameManager) {
-    this.gameManager = gameManager
-    this.selectedBlock = null
-    this.combo = 0
+    this.gameManager = gameManager;
+    this.selectedBlock = null;
+    this.combo = 0;
   }
 
   // 处理方块点击

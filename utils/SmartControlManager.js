@@ -1,312 +1,140 @@
-/**
- * 5G智能控制管理器
- * 模拟点点够净水器的5G远程控制功能
- */
+const logger = require('./Logger.js');
+
 class SmartControlManager {
   constructor() {
-    this.deviceInfo = {
-      id: 'DDG_' + Math.random().toString(36).substr(2, 9),
-      name: '点点够净水器',
-      model: 'DDG-RO-980',
-      version: '2.1.0',
-      connected: true,
-      lastHeartbeat: Date.now()
-    }
-
-    this.waterQuality = {
-      tds: 45,
-      ph: 7.2,
-      chlorine: 0.02,
-      temperature: 23,
-      flow: 1.8,
-      pressure: 0.25,
-      quality: 'excellent'
-    }
-
-    this.filterStatus = {
-      pp: { life: 85, needReplace: false, workDays: 45 },
-      cto: { life: 70, needReplace: false, workDays: 120 },
-      ro: { life: 90, needReplace: false, workDays: 180 }
-    }
-
     this.deviceStatus = {
-      power: true,
-      working: false,
-      strongFlush: false,
-      autoMode: true,
-      nightMode: false,
-      childLock: false
-    }
-
-    this.statistics = {
-      totalFiltered: 1250,
-      todayUsage: 25,
-      monthlyUsage: 680,
-      energySaved: 45,
-      co2Reduced: 12
-    }
-
-    this.alerts = []
-    this.operationHistory = []
-
-    this.initializeSmartFeatures()
-  }
-
-  // 初始化智能功能
-  initializeSmartFeatures() {
-    this.startHeartbeat()
-    this.startQualityMonitoring()
-    this.loadHistoryData()
-  }
-
-  // 开始心跳检测
-  startHeartbeat() {
-    setInterval(() => {
-      this.deviceInfo.lastHeartbeat = Date.now()
-      this.updateConnectionStatus()
-    }, 30000)
-  }
-
-  // 更新连接状态
-  updateConnectionStatus() {
-    const timeSinceLastHeartbeat = Date.now() - this.deviceInfo.lastHeartbeat
-    this.deviceInfo.connected = timeSinceLastHeartbeat < 60000
-  }
-
-  // 开始水质监测
-  startQualityMonitoring() {
-    setInterval(() => {
-      this.updateWaterQuality()
-      this.checkAlerts()
-    }, 10000)
-  }
-
-  // 更新水质数据
-  updateWaterQuality() {
-    const baseTargetTDS = 20 + (100 - this.filterStatus.ro.life) * 0.3
-    this.waterQuality.tds = Math.max(15, baseTargetTDS + (Math.random() - 0.5) * 10)
-    this.waterQuality.ph = 7.0 + (Math.random() - 0.5) * 0.6
-    this.waterQuality.chlorine = Math.max(0, 0.05 - this.filterStatus.cto.life * 0.0006)
-    this.waterQuality.temperature = 20 + Math.random() * 8
+      power: false,
+      mode: 'normal', // normal, flush, sleep
+      tds: 50,
+      temperature: 25,
+      filterLife: 80, // 滤芯寿命百分比
+      wifi: true,
+      lastUpdate: new Date()
+    };
     
-    if (this.deviceStatus.working) {
-      this.waterQuality.flow = 1.5 + Math.random() * 0.6
-    } else {
-      this.waterQuality.flow = 0
-    }
-    
-    this.waterQuality.pressure = 0.2 + Math.random() * 0.1
-    this.updateQualityGrade()
-  }
-
-  // 更新水质评级
-  updateQualityGrade() {
-    let score = 100
-    
-    if (this.waterQuality.tds > 50) score -= 20
-    else if (this.waterQuality.tds > 30) score -= 10
-    
-    if (this.waterQuality.ph < 6.5 || this.waterQuality.ph > 8.5) score -= 15
-    if (this.waterQuality.chlorine > 0.05) score -= 10
-    
-    if (score >= 90) this.waterQuality.quality = 'excellent'
-    else if (score >= 75) this.waterQuality.quality = 'good'
-    else if (score >= 60) this.waterQuality.quality = 'fair'
-    else this.waterQuality.quality = 'poor'
-  }
-
-  // 检查告警
-  checkAlerts() {
-    const now = Date.now()
-    
-    Object.keys(this.filterStatus).forEach(filterType => {
-      const filter = this.filterStatus[filterType]
-      if (filter.life <= 10 && !filter.needReplace) {
-        filter.needReplace = true
-        this.addAlert({
-          type: 'filter_replace',
-          level: 'high',
-          message: `${filterType.toUpperCase()}滤芯寿命不足10%，请及时更换`,
-          timestamp: now
-        })
-      }
-    })
-
-    if (this.waterQuality.quality === 'poor') {
-      this.addAlert({
-        type: 'water_quality',
-        level: 'medium',
-        message: '检测到水质异常，建议检查滤芯状态',
-        timestamp: now
-      })
-    }
-  }
-
-  // 添加告警
-  addAlert(alert) {
-    const existingAlert = this.alerts.find(a => 
-      a.type === alert.type && 
-      Math.abs(a.timestamp - alert.timestamp) < 300000
-    )
-    
-    if (!existingAlert) {
-      this.alerts.unshift(alert)
-      if (this.alerts.length > 20) {
-        this.alerts = this.alerts.slice(0, 20)
-      }
-    }
-  }
-
-  // 远程开关机
-  async togglePower() {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        this.deviceStatus.power = !this.deviceStatus.power
-        this.addOperationHistory('power', this.deviceStatus.power ? '开机' : '关机')
-        
-        if (!this.deviceStatus.power) {
-          this.deviceStatus.working = false
-          this.deviceStatus.strongFlush = false
-        }
-        
-        resolve({
-          success: true,
-          status: this.deviceStatus.power,
-          message: this.deviceStatus.power ? '设备已开机' : '设备已关机'
-        })
-      }, 1000)
-    })
-  }
-
-  // 启动强冲功能
-  async startStrongFlush() {
-    if (!this.deviceStatus.power) {
-      return { success: false, message: '设备未开机' }
-    }
-    
-    return new Promise((resolve) => {
-      this.deviceStatus.strongFlush = true
-      this.deviceStatus.working = true
-      this.addOperationHistory('strongFlush', '启动强冲')
-      
-      setTimeout(() => {
-        this.deviceStatus.strongFlush = false
-        this.deviceStatus.working = false
-        this.addOperationHistory('strongFlush', '强冲完成')
-        
-        Object.keys(this.filterStatus).forEach(key => {
-          this.filterStatus[key].life = Math.max(0, this.filterStatus[key].life - 0.5)
-        })
-        
-        resolve({
-          success: true,
-          message: '强冲完成，系统已自动清洁'
-        })
-      }, 30000)
-    })
+    this.modes = {
+      normal: { name: '正常模式', power: 100 },
+      flush: { name: '冲洗模式', power: 150 },
+      sleep: { name: '休眠模式', power: 10 }
+    };
   }
 
   // 获取设备状态
   getDeviceStatus() {
-    return {
-      device: this.deviceInfo,
-      waterQuality: this.waterQuality,
-      filters: this.filterStatus,
-      status: this.deviceStatus,
-      statistics: this.statistics,
-      alerts: this.alerts.slice(0, 5),
-      lastUpdate: Date.now()
-    }
+    return { ...this.deviceStatus };
   }
 
-  // 添加操作历史
-  addOperationHistory(type, description) {
-    this.operationHistory.unshift({
-      id: Date.now(),
-      type: type,
-      description: description,
-      timestamp: Date.now(),
-      user: 'remote'
-    })
+  // 开关机
+  togglePower() {
+    this.deviceStatus.power = !this.deviceStatus.power;
+    this.deviceStatus.lastUpdate = new Date();
+    this.simulateTDSChange();
+    return this.deviceStatus.power;
+  }
+
+  // 切换模式
+  switchMode(mode) {
+    if (this.modes[mode]) {
+      this.deviceStatus.mode = mode;
+      this.deviceStatus.lastUpdate = new Date();
+      this.simulateTDSChange();
+      return true;
+    }
+    return false;
+  }
+
+  // 获取模式列表
+  getModes() {
+    return this.modes;
+  }
+
+  // 强冲功能
+  startFlushing() {
+    const originalMode = this.deviceStatus.mode;
+    this.deviceStatus.mode = 'flush';
+    this.deviceStatus.lastUpdate = new Date();
     
-    if (this.operationHistory.length > 50) {
-      this.operationHistory = this.operationHistory.slice(0, 50)
-    }
+    // 模拟冲洗过程
+    setTimeout(() => {
+      // 冲洗完成后恢复原模式
+      this.deviceStatus.mode = originalMode;
+      this.deviceStatus.filterLife = Math.min(100, this.deviceStatus.filterLife + 5);
+      this.deviceStatus.tds = Math.max(0, this.deviceStatus.tds - 10);
+      this.deviceStatus.lastUpdate = new Date();
+      
+      wx.showToast({
+        title: '冲洗完成',
+        icon: 'success'
+      });
+    }, 3000);
+    
+    return true;
   }
 
-  // 加载历史数据
-  loadHistoryData() {
-    try {
-      const savedData = wx.getStorageSync('smartControlData')
-      if (savedData) {
-        this.statistics = { ...this.statistics, ...savedData.statistics }
-        this.operationHistory = savedData.operationHistory || []
+  // 模拟TDS变化
+  simulateTDSChange() {
+    // 根据设备状态模拟TDS变化
+    if (this.deviceStatus.power) {
+      if (this.deviceStatus.mode === 'flush') {
+        this.deviceStatus.tds = Math.max(0, this.deviceStatus.tds - 2);
+      } else if (this.deviceStatus.mode === 'normal') {
+        // 正常模式下缓慢变化
+        this.deviceStatus.tds = Math.max(0, this.deviceStatus.tds - Math.random() * 0.5);
       }
-    } catch (error) {
-      console.log('加载智能控制数据失败:', error)
     }
+    
+    // 模拟滤芯老化
+    if (this.deviceStatus.power && this.deviceStatus.mode !== 'sleep') {
+      this.deviceStatus.filterLife = Math.max(0, this.deviceStatus.filterLife - 0.01);
+    }
+    
+    this.deviceStatus.lastUpdate = new Date();
   }
 
-  // 保存数据
-  saveData() {
-    try {
-      wx.setStorageSync('smartControlData', {
-        statistics: this.statistics,
-        operationHistory: this.operationHistory
-      })
-    } catch (error) {
-      console.log('保存智能控制数据失败:', error)
-    }
-  }
-
-  // 游戏中展示智能控制界面
-  showSmartControlUI() {
+  // 获取水质报告
+  getWaterQualityReport() {
+    const status = this.getDeviceStatus();
+    const quality = status.tds < 50 ? '优秀' : status.tds < 100 ? '良好' : '一般';
+    
     return {
-      title: '5G智能控制',
-      deviceStatus: this.getDeviceStatus(),
-      controls: [
-        {
-          id: 'power',
-          name: '电源开关',
-          type: 'toggle',
-          value: this.deviceStatus.power,
-          action: 'togglePower'
-        },
-        {
-          id: 'strongFlush',
-          name: '强冲清洁',
-          type: 'button',
-          enabled: this.deviceStatus.power && !this.deviceStatus.strongFlush,
-          action: 'startStrongFlush'
-        }
-      ],
-      waterQualityDisplay: {
-        tds: { value: this.waterQuality.tds, unit: 'ppm', status: this.getQualityStatus(this.waterQuality.tds, 'tds') },
-        ph: { value: this.waterQuality.ph.toFixed(1), unit: '', status: this.getQualityStatus(this.waterQuality.ph, 'ph') },
-        temperature: { value: this.waterQuality.temperature.toFixed(1), unit: '°C', status: 'normal' },
-        flow: { value: this.waterQuality.flow.toFixed(1), unit: 'L/min', status: 'normal' }
-      }
-    }
+      tds: status.tds,
+      temperature: status.temperature,
+      quality: quality,
+      filterLife: status.filterLife,
+      recommendation: this.getRecommendation(status)
+    };
   }
 
-  // 获取水质参数状态
-  getQualityStatus(value, type) {
-    switch(type) {
-      case 'tds':
-        if (value <= 30) return 'excellent'
-        if (value <= 50) return 'good'
-        if (value <= 100) return 'fair'
-        return 'poor'
-        
-      case 'ph':
-        if (value >= 6.5 && value <= 8.5) return 'excellent'
-        if (value >= 6.0 && value <= 9.0) return 'good'
-        return 'poor'
-        
-      default:
-        return 'normal'
+  // 获取建议
+  getRecommendation(status) {
+    const recommendations = [];
+    
+    if (status.tds > 100) {
+      recommendations.push('建议立即更换滤芯');
+    } else if (status.tds > 50) {
+      recommendations.push('水质一般，建议检查滤芯');
     }
+    
+    if (status.filterLife < 20) {
+      recommendations.push('滤芯寿命不足20%，建议准备更换');
+    } else if (status.filterLife < 50) {
+      recommendations.push('滤芯寿命已过半，请关注');
+    }
+    
+    if (recommendations.length === 0) {
+      recommendations.push('设备运行正常，水质优秀');
+    }
+    
+    return recommendations;
+  }
+
+  // 模拟设备数据更新
+  updateDeviceData() {
+    // 定期更新设备数据
+    setInterval(() => {
+      this.simulateTDSChange();
+    }, 30000); // 每30秒更新一次
   }
 }
 
-module.exports = SmartControlManager
+module.exports = SmartControlManager;

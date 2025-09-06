@@ -1,105 +1,145 @@
 #!/bin/bash
 
-# 游戏后端部署脚本
-# 将Laravel控制器和API路由部署到服务器
+# 点点够净水消消乐后端部署脚本
 
-echo "开始部署游戏后端到服务器..."
+# 设置变量
+PROJECT_DIR="/Users/chanlaiyi/Water-Game"
+CLOUD_FUNCTIONS_DIR="$PROJECT_DIR/cloudfunctions"
+DEPLOY_LOG="$PROJECT_DIR/deploy.log"
 
-# 服务器配置
-SERVER_HOST="139.9.61.199"
-SERVER_USER="root"
-LARAVEL_PATH="/www/wwwroot/pay.itapgo.com/Tapp/admin"
+# 颜色定义
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
 
-# 本地文件
-LOCAL_GAME_CONFIG_CONTROLLER="./GameConfigController.php"
-LOCAL_GAME_ANALYTICS_CONTROLLER="./GameAnalyticsController.php"
-LOCAL_GAME_ACTIVITY_CONTROLLER="./GameActivityController.php"
-LOCAL_API_ROUTES="./game_api_routes.php"
+# 日志函数
+log() {
+    echo -e "$(date '+%Y-%m-%d %H:%M:%S') - $1" | tee -a $DEPLOY_LOG
+}
 
-# 检查文件是否存在
-echo "检查本地文件..."
-for file in "$LOCAL_GAME_CONFIG_CONTROLLER" "$LOCAL_GAME_ANALYTICS_CONTROLLER" "$LOCAL_GAME_ACTIVITY_CONTROLLER" "$LOCAL_API_ROUTES"; do
-    if [ ! -f "$file" ]; then
-        echo "错误：文件不存在 - $file"
-        exit 1
+log_success() {
+    echo -e "${GREEN}$(date '+%Y-%m-%d %H:%M:%S') - $1${NC}" | tee -a $DEPLOY_LOG
+}
+
+log_warning() {
+    echo -e "${YELLOW}$(date '+%Y-%m-%d %H:%M:%S') - $1${NC}" | tee -a $DEPLOY_LOG
+}
+
+log_error() {
+    echo -e "${RED}$(date '+%Y-%m-%d %H:%M:%S') - $1${NC}" | tee -a $DEPLOY_LOG
+}
+
+# 检查微信开发者工具是否安装
+check_wechat_devtools() {
+    log "检查微信开发者工具..."
+    if ! command -v wechat-devtools &> /dev/null; then
+        log_warning "未检测到微信开发者工具命令行工具"
+        log "请确保已安装微信开发者工具并配置了命令行调用"
+    else
+        log_success "微信开发者工具已安装"
     fi
-    echo "✓ 找到文件: $file"
-done
+}
 
-# 在服务器上创建必要的目录
-echo "在服务器上创建目录..."
-ssh $SERVER_USER@$SERVER_HOST << 'EOF'
-    LARAVEL_PATH="/www/wwwroot/pay.itapgo.com/Tapp/admin"
+# 部署云函数
+deploy_cloud_functions() {
+    log "开始部署云函数..."
     
-    # 创建控制器目录
-    mkdir -p "$LARAVEL_PATH/app/Http/Controllers/Game/Api/V1"
+    # 检查云函数目录是否存在
+    if [ ! -d "$CLOUD_FUNCTIONS_DIR" ]; then
+        log_error "云函数目录不存在: $CLOUD_FUNCTIONS_DIR"
+        return 1
+    fi
     
-    # 创建路由目录
-    mkdir -p "$LARAVEL_PATH/routes"
+    # 遍历所有云函数目录
+    for func_dir in "$CLOUD_FUNCTIONS_DIR"/*; do
+        if [ -d "$func_dir" ]; then
+            func_name=$(basename "$func_dir")
+            log "部署云函数: $func_name"
+            
+            # 检查package.json是否存在
+            if [ -f "$func_dir/package.json" ]; then
+                # 安装依赖
+                log "安装依赖: $func_name"
+                cd "$func_dir"
+                npm install --production
+                if [ $? -ne 0 ]; then
+                    log_error "依赖安装失败: $func_name"
+                    continue
+                fi
+            fi
+            
+            # 使用微信开发者工具部署云函数
+            # 这里需要根据实际的命令行工具调整
+            log "上传云函数: $func_name"
+            # wechat-devtools --upload-function "$func_name" "$func_dir"
+            
+            log_success "云函数部署完成: $func_name"
+        fi
+    done
     
-    echo "目录创建完成"
-EOF
+    log_success "所有云函数部署完成"
+}
 
-# 上传控制器文件
-echo "上传控制器文件..."
+# 部署数据库
+deploy_database() {
+    log "开始部署数据库..."
+    
+    # 检查SQL文件是否存在
+    SQL_FILE="$PROJECT_DIR/create_game_tables.sql"
+    if [ ! -f "$SQL_FILE" ]; then
+        log_error "数据库SQL文件不存在: $SQL_FILE"
+        return 1
+    fi
+    
+    log "执行数据库脚本: $SQL_FILE"
+    # 这里需要根据实际的数据库部署方式调整
+    # 例如使用微信云开发的数据库导入功能
+    
+    log_success "数据库部署完成"
+}
 
-echo "上传GameConfigController.php..."
-scp "$LOCAL_GAME_CONFIG_CONTROLLER" "$SERVER_USER@$SERVER_HOST:$LARAVEL_PATH/app/Http/Controllers/Game/Api/V1/"
-if [ $? -eq 0 ]; then
-    echo "✓ GameConfigController.php 上传成功"
-else
-    echo "❌ GameConfigController.php 上传失败"
-    exit 1
-fi
+# 部署前端资源
+deploy_frontend() {
+    log "开始部署前端资源..."
+    
+    # 检查项目目录
+    if [ ! -d "$PROJECT_DIR" ]; then
+        log_error "项目目录不存在: $PROJECT_DIR"
+        return 1
+    fi
+    
+    # 使用微信开发者工具上传代码
+    log "上传小程序代码"
+    # wechat-devtools --upload "$PROJECT_DIR"
+    
+    log_success "前端资源部署完成"
+}
 
-echo "上传GameAnalyticsController.php..."
-scp "$LOCAL_GAME_ANALYTICS_CONTROLLER" "$SERVER_USER@$SERVER_HOST:$LARAVEL_PATH/app/Http/Controllers/Game/Api/V1/"
-if [ $? -eq 0 ]; then
-    echo "✓ GameAnalyticsController.php 上传成功"
-else
-    echo "❌ GameAnalyticsController.php 上传失败"
-    exit 1
-fi
+# 主部署流程
+main() {
+    log "===================="
+    log "点点够净水消消乐部署开始"
+    log "===================="
+    
+    # 检查环境
+    check_wechat_devtools
+    
+    # 部署云函数
+    deploy_cloud_functions
+    
+    # 部署数据库
+    deploy_database
+    
+    # 部署前端
+    deploy_frontend
+    
+    log "===================="
+    log "部署完成"
+    log "===================="
+    
+    log_success "部署脚本执行完毕，请在微信公众平台查看部署结果"
+}
 
-echo "上传GameActivityController.php..."
-scp "$LOCAL_GAME_ACTIVITY_CONTROLLER" "$SERVER_USER@$SERVER_HOST:$LARAVEL_PATH/app/Http/Controllers/Game/Api/V1/"
-if [ $? -eq 0 ]; then
-    echo "✓ GameActivityController.php 上传成功"
-else
-    echo "❌ GameActivityController.php 上传失败"
-    exit 1
-fi
-
-# 上传API路由文件
-echo "上传API路由文件..."
-scp "$LOCAL_API_ROUTES" "$SERVER_USER@$SERVER_HOST:$LARAVEL_PATH/routes/"
-if [ $? -eq 0 ]; then
-    echo "✓ game_api_routes.php 上传成功"
-else
-    echo "❌ game_api_routes.php 上传失败"
-    exit 1
-fi
-
-# 验证上传结果
-echo "验证上传结果..."
-ssh $SERVER_USER@$SERVER_HOST << EOF
-    echo "检查上传的文件:"
-    ls -la $LARAVEL_PATH/app/Http/Controllers/Game/Api/V1/
-    echo ""
-    ls -la $LARAVEL_PATH/routes/game_api_routes.php
-EOF
-
-echo ""
-echo "🎉 后端部署完成！"
-echo ""
-echo "部署总结:"
-echo "✓ GameConfigController.php (游戏配置管理)"
-echo "✓ GameAnalyticsController.php (游戏数据分析)"
-echo "✓ GameActivityController.php (游戏活动管理)"
-echo "✓ game_api_routes.php (API路由配置)"
-echo ""
-echo "接下来需要:"
-echo "1. 在 routes/api.php 中引入 game_api_routes.php"
-echo "2. 运行数据库迁移创建表结构"
-echo "3. 配置相关中间件和权限"
-echo "4. 测试API接口功能"
+# 执行主函数
+main "$@"

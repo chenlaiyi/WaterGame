@@ -7,6 +7,9 @@
     "uploadFile": 10000,
     "downloadFile": 10000
   },
+  "cloud": true
+}
+{
   "subpackages": [
     {
       "name": "waterTest",

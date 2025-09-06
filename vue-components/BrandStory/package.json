@@ -1,0 +1,21 @@
+{
+  "name": "brand-story-component",
+  "version": "1.0.0",
+  "description": "点点够品牌故事Vue组件",
+  "main": "dist/brand-story.js",
+  "scripts": {
+    "build": "vue build src/BrandStory.vue --target lib --name brand-story",
+    "dev": "vue serve src/BrandStory.vue"
+  },
+  "keywords": [
+    "vue",
+    "brand",
+    "story",
+    "component"
+  ],
+  "author": "点点够技术团队",
+  "license": "MIT",
+  "dependencies": {
+    "vue": "^2.6.14"
+  }
+}

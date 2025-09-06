@@ -82,39 +82,25 @@
     </scroll-view>
   </view>
 
-  <!-- 功能菜单 -->
-  <view class="menu-section">
-    <view class="menu-grid">
-      <navigator class="menu-item" url="/pages/waterTest/waterTest" hover-class="menu-item-hover">
-        <view class="menu-icon water-test">🧪</view>
-        <view class="menu-text">
-          <text class="menu-title">水质检测</text>
-          <text class="menu-desc">学习净水知识</text>
-        </view>
-      </navigator>
-      
-      <navigator class="menu-item" url="/pages/shop/shop" hover-class="menu-item-hover">
-        <view class="menu-icon shop">🛒</view>
-        <view class="menu-text">
-          <text class="menu-title">道具商城</text>
-          <text class="menu-desc">获取游戏道具</text>
-        </view>
-      </navigator>
-      
-      <navigator class="menu-item" url="/pages/rank/rank" hover-class="menu-item-hover">
-        <view class="menu-icon rank">🏆</view>
-        <view class="menu-text">
-          <text class="menu-title">排行榜</text>
-          <text class="menu-desc">挑战好友</text>
-        </view>
-      </navigator>
-      
-      <view class="menu-item" bindtap="onShowBrandInfo">
-        <view class="menu-icon brand">💎</view>
-        <view class="menu-text">
-          <text class="menu-title">点点够净水器</text>
-          <text class="menu-desc">980元用2年</text>
-        </view>
+  <!-- 功能入口区域 -->
+  <view class="features-section">
+    <view class="section-title">游戏功能</view>
+    <view class="features-grid">
+      <view class="feature-item" bindtap="onGoToWaterTest">
+        <image class="feature-icon" src="/images/icons/water-test.png" mode="aspectFit"></image>
+        <text class="feature-name">水质检测</text>
+      </view>
+      <view class="feature-item" bindtap="onGoToShop">
+        <image class="feature-icon" src="/images/icons/shop.png" mode="aspectFit"></image>
+        <text class="feature-name">净水商城</text>
+      </view>
+      <view class="feature-item" bindtap="onGoToRank">
+        <image class="feature-icon" src="/images/icons/rank.png" mode="aspectFit"></image>
+        <text class="feature-name">排行榜</text>
+      </view>
+      <view class="feature-item" bindtap="onShowBrandInfo">
+        <image class="feature-icon" src="/images/icons/brand.png" mode="aspectFit"></image>
+        <text class="feature-name">品牌故事</text>
       </view>
     </view>
   </view>
